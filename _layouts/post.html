@@ -1,0 +1,35 @@
+---
+layout: comments
+---
+<article class="post-article{% if page.path contains '/poem/' %} poem{% endif %}">
+  <header class="post-header">
+    <h1 class="post-title">{{ page.title }}</h1>
+    {% if site.post.meta.enable %}
+    <div class="post-meta">
+      {% if site.post.meta.date %}
+      <span class="post-meta-item">
+        <time datetime="{{ page.date | date: '%Y-%m-%d' }}">{{ page.date | date: "%B %-d, %Y" }}</time>
+      </span>
+      {% endif %}
+      {% if page.categories and page.categories.size > 0 %}
+      <span class="post-meta-item">
+        {{ page.categories | join: ", " }}
+      </span>
+      {% endif %}
+      {% if site.post.meta.readtime.enable %}
+      <span class="post-meta-item">
+        {{ page.content | strip_html | strip_newlines | remove: " " | size | divided_by: site.post.meta.readtime.divided_by | plus: 1 }} min read
+      </span>
+      {% endif %}
+    </div>
+    {% endif %}
+  </header>
+  <div class="post-content{% if page.path contains '/poem/' %} poem-content{% endif %}">
+    {{ content }}
+  </div>
+  {% if site.post.meta.copyright %}
+  <footer class="post-footer">
+    <p class="post-copyright">{{ site.post.meta.copyright }}</p>
+  </footer>
+  {% endif %}
+</article>

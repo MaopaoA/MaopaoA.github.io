@@ -1,0 +1,277 @@
+---
+layout: page
+---
+<nav class="home-sections-nav">
+  <a href="{{ site.baseurl }}/career">Career Progression</a>
+  <a href="{{ site.baseurl }}/literature">Literary Creation</a>
+  <a href="{{ site.baseurl }}/math">Math</a>
+</nav>
+<div class="home-three-col">
+  <section class="home-col home-col-left">
+    <h2 class="home-section-title">Classic</h2>
+    <noscript>
+      {% assign recent_posts = site.posts | slice: 0, 3 %}
+      {% for post in site.posts offset:3 limit:3 %}
+      <article class="home-card">
+        <a href="{{ post.url }}" class="home-card-title">{{ post.title }}</a>
+        <div class="home-meta">
+          <span class="home-date">{{ post.date | date: "%b %-d, %Y" }}</span>
+          {% if post.categories and post.categories.size > 0 %}
+          <span class="home-category">{{ post.categories | join: ", " }}</span>
+          {% endif %}
+        </div>
+      </article>
+      {% endfor %}
+    </noscript>
+    <div id="classic-posts-container">
+      <script>
+      // Global function for extracting excerpts
+      function getFirstParagraph(text, isPoem) {
+        if (!text) return '';
+        
+        var lines = text.split('\n');
+        var skipCount = 0;
+        var startIdx = 0;
+        
+        // Skip title (first non-empty line)
+        for (var i = 0; i < lines.length; i++) {
+          var line = lines[i].trim();
+          if (line.length > 0) {
+            if (skipCount < 1) {
+              skipCount++;
+              startIdx = i + 1;
+            } else {
+              break;
+            }
+          }
+        }
+        
+        if (isPoem) {
+          // For poems: return first 6 lines, preserve line breaks
+          var poemLines = [];
+          var lineCount = 0;
+          for (var i = startIdx; i < lines.length && lineCount < 6; i++) {
+            var line = lines[i].trim();
+            if (line.length > 0) {
+              poemLines.push(line);
+              lineCount++;
+            }
+          }
+          return poemLines.join('\n');
+        } else {
+          // For regular articles: get first paragraph (until first empty line)
+          var firstPara = '';
+          var foundFirstLine = false;
+          
+          for (var i = startIdx; i < lines.length; i++) {
+            var line = lines[i].trim();
+            if (line.length > 0) {
+              if (!foundFirstLine) {
+                firstPara = line;
+                foundFirstLine = true;
+              } else {
+                firstPara += ' ' + line;
+              }
+            } else if (foundFirstLine) {
+              // Found end of first paragraph
+              break;
+            }
+          }
+          
+          // If too long, truncate at last sentence (period)
+          if (firstPara.length > 140) {
+            var truncated = firstPara.substring(0, 140);
+            var lastPeriod = truncated.lastIndexOf('。');
+            var lastPeriodEn = truncated.lastIndexOf('.');
+            var lastPeriodIdx = Math.max(lastPeriod, lastPeriodEn);
+            
+            if (lastPeriodIdx > 50) {
+              // Only use period cutoff if it's not too early
+              firstPara = truncated.substring(0, lastPeriodIdx + 1);
+            } else {
+              firstPara = truncated;
+            }
+          }
+          
+          return firstPara;
+        }
+      }
+      
+      (function() {
+        var allPosts = [
+          {% for post in site.posts %}
+          {
+            title: {{ post.title | jsonify }},
+            url: {{ post.url | jsonify }},
+            date: "{{ post.date | date: "%b %-d, %Y" }}",
+            categories: {{ post.categories | jsonify }},
+            isPoem: {{ post.path | jsonify }}.indexOf('/poem/') !== -1,
+            content: {{ post.content | strip_html | jsonify }}
+          }{% unless forloop.last %},{% endunless %}
+          {% endfor %}
+        ];
+        
+        function shuffleArray(array) {
+          var shuffled = array.slice();
+          for (var i = shuffled.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = shuffled[i];
+            shuffled[i] = shuffled[j];
+            shuffled[j] = temp;
+          }
+          return shuffled;
+        }
+        
+        // Exclude the first 3 posts (most recent) from Classic section
+        var postsExcludingRecent = allPosts.slice(3);
+        var shuffledPosts = shuffleArray(postsExcludingRecent);
+        var selectedPosts = shuffledPosts.slice(0, 3);
+        var container = document.getElementById('classic-posts-container');
+        
+        if (selectedPosts.length === 0) {
+          container.innerHTML = '<p style="color: rgba(0, 0, 0, 0.5); font-style: italic;">No posts available.</p>';
+          return;
+        }
+        
+        container.innerHTML = selectedPosts.map(function(post) {
+          var categoriesHtml = post.categories && post.categories.length > 0 
+            ? '<span class="home-category">' + post.categories.join(', ') + '</span>'
+            : '';
+          var excerpt = getFirstParagraph(post.content, post.isPoem);
+          var excerptHtml = '';
+          
+          if (excerpt && excerpt.trim()) {
+            if (post.isPoem) {
+              // For poems, preserve line breaks
+              excerptHtml = '<div class="home-excerpt poem-excerpt">' + 
+                excerpt.split('\n').map(function(line) {
+                  return line.trim() ? line.trim() : '<br>';
+                }).join('<br>') + 
+                '</div>';
+            } else {
+              excerptHtml = '<p class="home-excerpt">' + excerpt.trim() + '</p>';
+            }
+          }
+          
+          return '<article class="home-card">' +
+            '<a href="' + post.url + '" class="home-card-title">' + post.title + '</a>' +
+            '<div class="home-meta">' +
+            '<span class="home-date">' + post.date + '</span>' +
+            (categoriesHtml ? ' ' + categoriesHtml : '') +
+            '</div>' +
+            (excerptHtml || '') +
+            '</article>';
+        }).join('');
+      })();
+      </script>
+    </div>
+  </section>
+  <section class="home-col home-col-center">
+    <h2 class="home-section-title">Latest</h2>
+    {% assign recent_count = 0 %}
+    {% for post in site.posts limit:3 %}
+      {% assign recent_count = recent_count | plus: 1 %}
+      <article class="home-card">
+        <a href="{{ post.url }}" class="home-card-title">{{ post.title }}</a>
+        <div class="home-meta">
+          <span class="home-date">{{ post.date | date: "%b %-d, %Y" }}</span>
+          {% if post.categories and post.categories.size > 0 %}
+          <span class="home-category">
+            {{ post.categories | join: ", " }}
+          </span>
+          {% endif %}
+        </div>
+        {% assign post_content_raw = post.content | strip_html | strip %}
+        {% assign post_lines = post_content_raw | split: '
+' %}
+        {% assign skip_count = 0 %}
+        {% assign excerpt_text = '' %}
+        {% assign is_poem = false %}
+        {% if post.path contains '/poem/' %}
+          {% assign is_poem = true %}
+        {% endif %}
+        {% if is_poem %}
+          {% assign line_count = 0 %}
+          {% for line in post_lines %}
+            {% assign line_stripped = line | strip %}
+            {% if line_stripped.size > 0 %}
+              {% if skip_count < 1 %}
+                {% assign skip_count = skip_count | plus: 1 %}
+              {% elsif line_count < 6 %}
+                {% if excerpt_text.size > 0 %}
+                  {% assign excerpt_text = excerpt_text | append: '
+' | append: line_stripped %}
+                {% else %}
+                  {% assign excerpt_text = line_stripped %}
+                {% endif %}
+                {% assign line_count = line_count | plus: 1 %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          {% if excerpt_text.size > 0 %}
+          <div class="home-excerpt poem-excerpt">{{ excerpt_text }}</div>
+          {% endif %}
+        {% else %}
+          {% assign para_started = 0 %}
+          {% for line in post_lines %}
+            {% if para_started == 2 %}
+              {% break %}
+            {% endif %}
+            {% assign line_stripped = line | strip %}
+            {% if line_stripped.size > 0 %}
+              {% if skip_count < 1 %}
+                {% assign skip_count = skip_count | plus: 1 %}
+              {% elsif para_started == 0 %}
+                {% assign excerpt_text = line_stripped %}
+                {% assign para_started = 1 %}
+              {% elsif para_started == 1 %}
+                {% assign excerpt_text = excerpt_text | append: ' ' | append: line_stripped %}
+                {% if excerpt_text.size > 140 %}
+                  {% assign para_started = 2 %}
+                {% endif %}
+              {% endif %}
+            {% elsif para_started == 1 %}
+              {% assign para_started = 2 %}
+            {% endif %}
+          {% endfor %}
+          {% assign excerpt_text = excerpt_text | strip %}
+          {% if excerpt_text.size > 140 %}
+            {% assign truncated = excerpt_text | truncate: 140, '' %}
+            {% assign excerpt_text = truncated %}
+          {% endif %}
+          {% if excerpt_text.size > 0 %}
+          <p class="home-excerpt">{{ excerpt_text }}</p>
+          {% endif %}
+        {% endif %}
+      </article>
+    {% endfor %}
+    {% if recent_count == 0 %}
+    <p style="color: rgba(0, 0, 0, 0.5); font-style: italic;">No posts available.</p>
+    {% endif %}
+  </section>
+  <section class="home-col home-col-right">
+    <h2 class="home-section-title">Literary & Profile</h2>
+    <section class="home-profile">
+      {% if site.sidebar.avatar.enable %}
+      <div class="home-profile-avatar">
+        <img src="{{ site.sidebar.avatar.img }}" alt="avatar" />
+      </div>
+      {% endif %}
+      <div class="home-profile-text">
+        <p style="margin-bottom: 0.75rem; font-size: 0.9rem; line-height: 1.6;">
+          This is the small site of a former Chinese boy, used to document his chaotic and bitter exploration of a world he has not yet truly experienced. You might find content related to: literature, mathematics, artificial intelligence, earth sciences, Japanese, anime, games, and history.
+        </p>
+        <div class="home-profile-music">
+          {{ site.sidebar.description }}
+        </div>
+      </div>
+      <div class="home-profile-social">
+        {% for s in site.sidebar.social %}
+        <a href="{{ s.href }}" title="{{ s.title }}">
+          <i class="{{ s.class }}"></i>
+        </a>
+        {% endfor %}
+      </div>
+    </section>
+  </section>
+</div>
