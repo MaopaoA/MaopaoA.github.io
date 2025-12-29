@@ -1335,6 +1335,7 @@ code,
     flex-shrink: 0;
     margin-bottom: 0;
     text-align: left;
+    order: 1;
   }
   
   .home-profile-avatar img {
@@ -1347,18 +1348,25 @@ code,
     flex: 1;
     min-width: 0; /* Allow text to shrink */
     margin-bottom: 0;
+    order: 2;
+    display: flex;
+    flex-direction: column;
   }
   
   .home-profile-text p {
     margin-bottom: 0.5rem;
     font-size: 0.85rem;
     line-height: 1.5;
+    flex-shrink: 0;
   }
   
+  /* Move music below avatar and text on mobile - break out of text container */
   .home-profile-music {
-    width: 100%;
+    width: calc(100% + 80px + 1rem); /* Full width including avatar space */
     margin-top: 0.75rem;
     margin-bottom: 0.5rem;
+    margin-left: calc(-80px - 1rem); /* Offset to align with left edge */
+    order: 10; /* Ensure it appears after text */
   }
   
   .home-profile-music iframe {
@@ -1369,6 +1377,7 @@ code,
     width: 100%;
     margin-top: 0.5rem;
     text-align: center;
+    order: 4;
   }
   
   /* Optimize footer - reverse gradient for mobile (white to transparent) */

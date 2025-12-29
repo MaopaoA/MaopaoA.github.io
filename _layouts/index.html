@@ -8,7 +8,7 @@ layout: page
 </nav>
 <div class="home-three-col">
   <section class="home-col home-col-left">
-    <h2 class="home-section-title">Classic</h2>
+    <h2 class="home-section-title">Archive</h2>
     <noscript>
       {% assign recent_posts = site.posts | slice: 0, 3 %}
       {% for post in site.posts offset:3 limit:3 %}
@@ -60,12 +60,17 @@ layout: page
           return poemLines.join('\n');
         } else {
           // For regular articles: get first paragraph (until first empty line)
+          // Skip markdown headers (##, ###, etc.) and single numbers
           var firstPara = '';
           var foundFirstLine = false;
           
           for (var i = startIdx; i < lines.length; i++) {
             var line = lines[i].trim();
             if (line.length > 0) {
+              // Skip markdown headers (starts with #) or single numbers
+              if (line.match(/^#+\s/) || line.match(/^\d+$/)) {
+                continue;
+              }
               if (!foundFirstLine) {
                 firstPara = line;
                 foundFirstLine = true;
@@ -122,7 +127,7 @@ layout: page
           return shuffled;
         }
         
-        // Exclude the first 3 posts (most recent) from Classic section
+        // Exclude the first 3 posts (most recent) from Archive section
         var postsExcludingRecent = allPosts.slice(3);
         var shuffledPosts = shuffleArray(postsExcludingRecent);
         var selectedPosts = shuffledPosts.slice(0, 3);
@@ -221,14 +226,35 @@ layout: page
             {% if line_stripped.size > 0 %}
               {% if skip_count < 1 %}
                 {% assign skip_count = skip_count | plus: 1 %}
-              {% elsif para_started == 0 %}
-                {% assign excerpt_text = line_stripped %}
-                {% assign para_started = 1 %}
-              {% elsif para_started == 1 %}
-                {% assign excerpt_text = excerpt_text | append: ' ' | append: line_stripped %}
-                {% if excerpt_text.size > 140 %}
-                  {% assign para_started = 2 %}
+              {% else %}
+                {% comment %} Skip markdown headers (##, ###, etc.) and single numbers/chapter markers {% endcomment %}
+                {% assign should_skip = false %}
+                {% if line_stripped contains '##' %}
+                  {% assign should_skip = true %}
+                {% else %}
+                  {% assign line_no_hash = line_stripped | remove: '#' | remove: ' ' | strip %}
+                  {% if line_no_hash.size <= 3 %}
+                    {% assign is_only_digits = true %}
+                    {% for i in (1..20) %}
+                      {% assign num_str = i | append: '' %}
+                      {% if line_no_hash == num_str %}
+                        {% assign should_skip = true %}
+                        {% break %}
+                      {% endif %}
+                    {% endfor %}
+                  {% endif %}
                 {% endif %}
+                {% unless should_skip %}
+                  {% if para_started == 0 %}
+                    {% assign excerpt_text = line_stripped %}
+                    {% assign para_started = 1 %}
+                  {% elsif para_started == 1 %}
+                    {% assign excerpt_text = excerpt_text | append: ' ' | append: line_stripped %}
+                    {% if excerpt_text.size > 140 %}
+                      {% assign para_started = 2 %}
+                    {% endif %}
+                  {% endif %}
+                {% endunless %}
               {% endif %}
             {% elsif para_started == 1 %}
               {% assign para_started = 2 %}
