@@ -126,7 +126,23 @@ pre {
 }
 .sidebar {
   font-family: "Times New Roman", "Times", serif;
+  background-color: #2d2d2d !important; /* Dark gray background instead of cyan */
+  color: #f5f5f5 !important;
 }
+
+/* Override sidebar background colors for all theme variants */
+.theme-base-08 .sidebar,
+.theme-base-09 .sidebar,
+.theme-base-0a .sidebar,
+.theme-base-0b .sidebar,
+.theme-base-0c .sidebar,
+.theme-base-0d .sidebar,
+.theme-base-0e .sidebar,
+.theme-base-0f .sidebar {
+  background-color: #2d2d2d !important;
+  color: #f5f5f5 !important;
+}
+
 .sidebar-nav-logo {
   text-align: center;
   padding: 1rem 0;
@@ -146,18 +162,46 @@ pre {
   text-decoration: none;
   background-color: rgba(255,255,255,.1);
 }
-/* Hide the sidebar checkbox that we toggle with `.sidebar-toggle` */
-.sidebar-checkbox {
-  display: none;
-}
+
+/* Sidebar toggle button styling - transparent background with black icon */
 .sidebar-toggle {
-  position: fixed;
+  background-color: transparent !important;
+  background: transparent !important;
+  color: #000000 !important;
+  border: none !important;
+  text-align: center !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0.18rem 0.5rem 0.4rem 0.5rem !important;
+  line-height: 1 !important;
+  vertical-align: middle !important;
 }
+
+.sidebar-toggle:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Ensure Font Awesome icon is centered */
+.sidebar-toggle.fas::before,
+.sidebar-toggle.fa::before {
+  display: block;
+  text-align: center;
+  margin: 0;
+  line-height: 1;
+  vertical-align: middle;
+}
+
 .sidebar-toggle:before,
 .sidebar-toggle:active:before,
 #sidebar-checkbox:focus ~ .sidebar-toggle:before,
 #sidebar-checkbox:checked ~ .sidebar-toggle:before {
-  background-image: none;
+  background-image: none !important;
+}
+
+/* Hide the sidebar checkbox that we toggle with `.sidebar-toggle` */
+.sidebar-checkbox {
+  display: none;
 }
 /* Preserve monospaced font for code blocks */
 pre,
@@ -695,6 +739,23 @@ code,
   flex-direction: column;
   gap: 1rem;
 }
+/* Mobile: reorder columns - Latest before Classic */
+@media (max-width: 48em) {
+  .home-three-col {
+    display: flex;
+    flex-direction: column;
+  }
+  .home-col-left {
+    order: 2; /* Classic comes second on mobile */
+  }
+  .home-col-center {
+    order: 1; /* Latest comes first on mobile */
+  }
+  .home-col-right {
+    order: 3; /* Profile comes last on mobile */
+  }
+}
+
 @media (min-width: 64em) {
   .home-three-col {
     grid-template-columns: 1fr 1.8fr 1.1fr;
@@ -899,6 +960,11 @@ code,
   max-width: 100%;
   margin: 0 auto;
   font-family: "Times New Roman", "Times", serif !important;
+}
+
+/* Hide the first h1 in post content (since title is already shown in header) */
+.post-content > h1:first-child {
+  display: none !important;
 }
 
 .post-content h1,
@@ -1258,9 +1324,57 @@ code,
     padding: 1rem;
   }
   
-  /* Optimize footer */
+  /* Mobile: avatar and text side by side */
+  .home-profile {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .home-profile-avatar {
+    flex-shrink: 0;
+    margin-bottom: 0;
+    text-align: left;
+  }
+  
+  .home-profile-avatar img {
+    max-width: 80px;
+    width: 80px;
+    height: 80px;
+  }
+  
+  .home-profile-text {
+    flex: 1;
+    min-width: 0; /* Allow text to shrink */
+    margin-bottom: 0;
+  }
+  
+  .home-profile-text p {
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  
+  .home-profile-music {
+    width: 100%;
+    margin-top: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .home-profile-music iframe {
+    height: 80px; /* Reduce height on mobile */
+  }
+  
+  .home-profile-social {
+    width: 100%;
+    margin-top: 0.5rem;
+    text-align: center;
+  }
+  
+  /* Optimize footer - reverse gradient for mobile (white to transparent) */
   .site-footer {
     padding: 1.5rem 0;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.9) 35%, rgba(255, 255, 255, 0.6) 75%, rgba(255, 255, 255, 0.3) 90%, rgba(255, 255, 255, 0) 100%);
   }
   
   .site-footer-links {
