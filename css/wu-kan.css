@@ -1076,3 +1076,195 @@ code,
     max-width: 48rem;
   }
 }
+
+/* Mobile optimizations - Hide Live2D and improve layout */
+@media (max-width: 48em) {
+  /* Hide Live2D widget on mobile */
+  #live2d-widget,
+  .live2d-widget-container,
+  canvas[id*="live2d"] {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  
+  /* Optimize body background for mobile */
+  body {
+    background-size: cover;
+    background-attachment: scroll;
+  }
+  
+  /* Improve masthead title for mobile */
+  .masthead-title {
+    font-size: 1.8rem;
+    margin: 1rem 0 0.75rem;
+    letter-spacing: 0.1em;
+  }
+  
+  .masthead-title-sub {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+  }
+  
+  /* Optimize section page titles */
+  .section-page-title {
+    font-size: 1.75rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .section-description {
+    font-size: 0.9rem;
+  }
+  
+  /* Improve section post layout */
+  .section-post-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .section-post-title {
+    font-size: 1.1rem;
+    line-height: 1.3;
+  }
+  
+  .section-post-date {
+    font-size: 0.8rem;
+  }
+  
+  .section-post-excerpt {
+    font-size: 0.9rem;
+    max-width: 100%;
+    margin-top: 0.75rem;
+  }
+  
+  /* Optimize post article for mobile */
+  .post-article {
+    padding: 1.5rem 1rem;
+  }
+  
+  .post-title {
+    font-size: 1.75rem !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .post-content {
+    font-size: 1rem !important;
+    line-height: 1.7 !important;
+  }
+  
+  .post-content h1 {
+    font-size: 1.5rem;
+    margin-top: 1.5rem;
+  }
+  
+  .post-content h2 {
+    font-size: 1.3rem;
+    margin-top: 1.25rem;
+  }
+  
+  .post-content h3 {
+    font-size: 1.15rem;
+    margin-top: 1rem;
+  }
+  
+  .post-content p {
+    margin-bottom: 1rem;
+    text-indent: 1.5em;
+  }
+  
+  /* Improve home layout for mobile */
+  .home-sections-nav {
+    gap: 1rem;
+    padding: 0.5rem 0 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .home-section-title {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .home-featured-title {
+    font-size: 1.2rem;
+  }
+  
+  .home-card-title {
+    font-size: 1rem;
+  }
+  
+  .home-excerpt {
+    font-size: 0.85rem;
+  }
+  
+  /* Optimize literature page */
+  .literature-subtitle {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  
+  .poem-title {
+    font-size: 1rem;
+  }
+  
+  .poem-preview {
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+  
+  /* Improve content padding */
+  .content .section-page {
+    padding: 1.5rem 1rem;
+  }
+  
+  .section-post-list li {
+    padding: 1rem 0;
+  }
+  
+  .section-post-list li:hover {
+    margin: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  
+  /* Optimize news layout */
+  .news-top-nav {
+    gap: 1rem;
+    font-size: 0.85rem;
+    padding: 0.5rem 0 0.75rem;
+  }
+  
+  .news-item {
+    padding: 0.5rem 0;
+  }
+  
+  .news-item-title {
+    font-size: 0.95rem;
+  }
+  
+  .news-excerpt {
+    font-size: 0.85rem;
+  }
+  
+  /* Improve spacing for mobile */
+  .home-layout,
+  .news-layout,
+  .literature-layout {
+    gap: 1.5rem;
+  }
+  
+  .home-profile,
+  .sidebar-item:first-child {
+    padding: 1rem;
+  }
+  
+  /* Optimize footer */
+  .site-footer {
+    padding: 1.5rem 0;
+  }
+  
+  .site-footer-links {
+    font-size: 0.85rem;
+    gap: 0.75rem;
+  }
+}
