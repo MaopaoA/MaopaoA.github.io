@@ -243,7 +243,7 @@ sidebar:
   - title: '<i class="fas fa-calculator fa-fw"></i> Math'
     href: /math
   logo:
-    src: /public/image/icon.png
+    src: /image/icon.png
     href: /
   simple_jekyll_search:
     enable: true
