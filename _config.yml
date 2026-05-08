@@ -176,9 +176,6 @@ script: # 需要在正文前调用的脚本或者插件的autoloader
 #    value: //cdn.jsdelivr.net/npm/canvas-nest.js/dist/canvas-nest.js
 - var:
   - key: src
-    value: //cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget/autoload.js # live2d
-- var:
-  - key: src
     value: //cdn.jsdelivr.net/gh/maopaoA/maopao.github.io@8bf0f3f362e9dee8c2179d21353e6fc1c43de0ac/public/js/prism.js
 #- var: mathjax
 #  - key: src

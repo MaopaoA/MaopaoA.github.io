@@ -1145,14 +1145,6 @@ code,
 
 /* Mobile optimizations - Hide Live2D and improve layout */
 @media (max-width: 48em) {
-  /* Hide Live2D widget on mobile */
-  #live2d-widget,
-  .live2d-widget-container,
-  canvas[id*="live2d"] {
-    display: none !important;
-    visibility: hidden !important;
-  }
-  
   /* Optimize body background for mobile */
   body {
     background-size: cover;
