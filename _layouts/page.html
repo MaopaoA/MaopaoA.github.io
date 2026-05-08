@@ -114,6 +114,7 @@
             {% endif %}
           </h1>
         </a>
+        <button id="dark-mode-toggle" aria-label="Toggle dark mode"><i class="fas fa-moon"></i></button>
       </div>
     </div>
     <div class="container content">
@@ -125,16 +126,32 @@
     <div class="container">
       <p class="site-footer-brand">© {{ site.time | date: '%Y' }} {{ site.title }}</p>
       <ul class="site-footer-links">
-        <li><a href="/about">About</a></li>
-        <li><a href="/contact">Contact</a></li>
-        <li><a href="/privacy">Privacy Policy</a></li>
-        <li><a href="/terms">Terms of Service</a></li>
         <li><a href="/archive">Archive</a></li>
       </ul>
     </div>
   </footer>
   {% endunless %}
   <label for="sidebar-checkbox" class="sidebar-toggle fas fa-bars"></label>
+  <script>
+    (function() {
+      var toggle = document.getElementById('dark-mode-toggle');
+      var icon = toggle ? toggle.querySelector('i') : null;
+      function setDark(on) {
+        document.body.classList.toggle('dark-mode', on);
+        if (icon) {
+          icon.className = on ? 'fas fa-sun' : 'fas fa-moon';
+        }
+      }
+      setDark(localStorage.getItem('dark-mode') === '1');
+      if (toggle) {
+        toggle.addEventListener('click', function() {
+          var isDark = document.body.classList.contains('dark-mode');
+          setDark(!isDark);
+          localStorage.setItem('dark-mode', isDark ? '0' : '1');
+        });
+      }
+    })();
+  </script>
 </body>
 
 </html>

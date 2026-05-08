@@ -7,7 +7,7 @@ baseurl: "" # 假如你的博客是建在某个目录下的，请在这里加上
 
 title: maopao's blog
 url: https://MaopaoA.github.io/
-author: WuK
+author: maopao
 
 defaults:
   - scope:
@@ -179,15 +179,6 @@ script: # 需要在正文前调用的脚本或者插件的autoloader
     value: //cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget/autoload.js # live2d
 - var:
   - key: src
-    value: //cdn.jsdelivr.net/gh/maopaoA/maopao.github.io@8bf0f3f362e9dee8c2179d21353e6fc1c43de0ac/public/js/mermaid.js
-  - key: js
-    value: //cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js
-  - key: stylesheet
-    value: //cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.css
-  - key: markdown_expand
-    value: true
-- var:
-  - key: src
     value: //cdn.jsdelivr.net/gh/maopaoA/maopao.github.io@8bf0f3f362e9dee8c2179d21353e6fc1c43de0ac/public/js/prism.js
 #- var: mathjax
 #  - key: src
@@ -223,13 +214,6 @@ sidebar:
   - title: github
     href: //github.com/MaopaoA
     class: 'fab fa-github fa-fw'
-  - title: codeforces
-    href: //codeforces.com/
-    class: 'fas fa-chart-bar fw'
-  - title: qq
-    class: 'fab fa-qq fa-fw'
-  - title: weixin
-    class: 'fab fa-weixin fa-fw'
   - title: zhihu
     href: //www.zhihu.com/people/maopao666/activities
     class: 'fab fa-zhihu fa-fw'
@@ -281,7 +265,6 @@ sidebar:
     second: 秒
   copyright:
     enable: true
-    text: '<script async defer src="https://buttons.github.io/buttons.js"></script><a class="github-button" aria-label="Star wu-kan/wu-kan.github.io on GitHub" href="https://github.com/wu-kan/wu-kan.github.io" data-icon="octicon-star" data-show-count="true">Star</a>'
 
 index:
   showtag:
@@ -302,18 +285,6 @@ post:
       enable: true
       unit: 次
     copyright: '<i class="fab fa-creative-commons"></i> <a rel="license" href="//creativecommons.org/licenses/by-sa/4.0/deed.zh">BY-SA 4.0</a>（除特别声明或转载文章外）'
-  reward:
-    enable: true
-    text: 如果这篇博客帮助到你，可以请我喝一杯咖啡~
-    img: # 万一真的有人打赏呢~
-    - id: wechat
-      src: //cdn.jsdelivr.net/gh/maopaoA/maopao.github.io@8bf0f3f362e9dee8c2179d21353e6fc1c43de0ac/public/image/wechatpay.jpg
-    - id: wechatappreciate
-      src: //cdn.jsdelivr.net/gh/maopaoA/maopao.github.io@8bf0f3f362e9dee8c2179d21353e6fc1c43de0ac/public/image/wechatappreciate.jpg
-    - id: qq
-      src: //cdn.jsdelivr.net/gh/maopaoA/maopao.github.io@8bf0f3f362e9dee8c2179d21353e6fc1c43de0ac/public/image/qqpay.jpg
-    - id: alipay
-      src: //cdn.jsdelivr.net/gh/maopaoA/maopao.github.io@8bf0f3f362e9dee8c2179d21353e6fc1c43de0ac/public/image/alipay.jpg
 
 valine:
   enable: true

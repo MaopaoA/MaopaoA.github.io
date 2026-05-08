@@ -25,7 +25,7 @@ body {
   background-size: 100%;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  font-family: "Times New Roman", "Times", serif;
+  font-family: "Times New Roman", Georgia, "Palatino Linotype", serif;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -35,7 +35,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Times New Roman", "Times", serif;
+  font-family: "Times New Roman", Georgia, "Palatino Linotype", serif;
 }
 pre {
   max-height: 50vh;
@@ -57,7 +57,7 @@ pre {
   text-align: center;
 }
 .site-footer-brand {
-  font-family: "Times New Roman", "Times", serif;
+  font-family: "Times New Roman", Georgia, "Palatino Linotype", serif;
   font-size: 1rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -89,7 +89,7 @@ pre {
 }
 .masthead-title {
   margin: 1.5rem 0 1rem;
-  font-family: "Times New Roman", "Times", serif;
+  font-family: "Times New Roman", Georgia, "Palatino Linotype", serif;
   text-transform: uppercase;
   letter-spacing: 0.15em;
   font-size: 2.6rem;
@@ -125,7 +125,7 @@ pre {
   border-width: 0px;
 }
 .sidebar {
-  font-family: "Times New Roman", "Times", serif;
+  font-family: "Times New Roman", Georgia, "Palatino Linotype", serif;
   background-color: #2d2d2d !important; /* Dark gray background instead of cyan */
   color: #f5f5f5 !important;
 }
@@ -367,7 +367,7 @@ code,
 }
 
 .section-page-title {
-  font-family: "Times New Roman", "Times", serif;
+  font-family: "Times New Roman", Georgia, "Palatino Linotype", serif;
   font-size: 2.5rem;
   font-weight: 700;
   margin: 0 0 0.5rem 0;
@@ -482,7 +482,7 @@ code,
 }
 
 .literature-subtitle {
-  font-family: "Times New Roman", "Times", serif;
+  font-family: "Times New Roman", Georgia, "Palatino Linotype", serif;
   font-size: 1.5rem;
   font-weight: 600;
   margin: 0 0 1.5rem 0;
@@ -512,7 +512,7 @@ code,
 
 .poem-title {
   display: block;
-  font-family: "Times New Roman", "Times", serif;
+  font-family: "Times New Roman", Georgia, "Palatino Linotype", serif;
   font-size: 1.1rem;
   font-weight: 600;
   color: #000 !important;
@@ -535,7 +535,7 @@ code,
 }
 
 .poem-preview {
-  font-family: "Times New Roman", "Times", serif;
+  font-family: "Times New Roman", Georgia, "Palatino Linotype", serif;
   font-size: 0.9rem;
   line-height: 1.8;
   color: rgba(0, 0, 0, 0.75);
@@ -673,7 +673,7 @@ code,
 }
 
 .home-excerpt.poem-excerpt {
-  font-family: "Times New Roman", "Times", serif;
+  font-family: "Times New Roman", Georgia, "Palatino Linotype", serif;
   font-size: 0.9rem;
   line-height: 1.8;
   color: rgba(0, 0, 0, 0.75);
@@ -973,7 +973,7 @@ code,
 .post-content h4,
 .post-content h5,
 .post-content h6 {
-  font-family: "Times New Roman", "Times", serif;
+  font-family: "Times New Roman", Georgia, "Palatino Linotype", serif;
   font-weight: 700;
   margin-top: 2rem;
   margin-bottom: 1rem;
@@ -1020,7 +1020,7 @@ code,
 .post-content.poem-content {
   text-align: left;
   line-height: 2.2;
-  font-family: "Times New Roman", "Times", serif;
+  font-family: "Times New Roman", Georgia, "Palatino Linotype", serif;
   max-width: 32rem;
   margin: 0 auto;
 }
@@ -1132,14 +1132,14 @@ code,
   .post-article {
     padding: 4rem 3rem;
   }
-  
+
   .post-title {
     font-size: 3.5rem;
   }
-  
+
   .post-content {
     font-size: 1.25rem;
-    max-width: 48rem;
+    max-width: 52rem;
   }
 }
 
@@ -1390,4 +1390,176 @@ code,
     font-size: 0.85rem;
     gap: 0.75rem;
   }
+}
+
+/* ===== Reading Progress Bar ===== */
+#reading-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  background-color: #000;
+  z-index: 9999;
+  transition: width 0.1s linear;
+}
+body.dark-mode #reading-progress-bar {
+  background-color: #e8e6e3;
+}
+
+/* ===== Prev/Next Post Navigation ===== */
+.post-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  flex-wrap: wrap;
+}
+.post-nav-link {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  text-decoration: none;
+  max-width: 48%;
+}
+.post-nav-newer {
+  text-align: right;
+  margin-left: auto;
+}
+.post-nav-label {
+  font-size: 0.8rem;
+  color: rgba(0, 0, 0, 0.5);
+}
+.post-nav-title {
+  font-size: 1rem;
+  color: #000;
+  font-weight: 600;
+}
+.post-nav-link:hover .post-nav-title {
+  text-decoration: underline;
+}
+body.dark-mode .post-nav {
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+body.dark-mode .post-nav-title {
+  color: #e8e6e3;
+}
+body.dark-mode .post-nav-label {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ===== Drop Cap ===== */
+.post-article:not(.poem) .post-content > p:first-of-type::first-letter {
+  font-size: 3.5em;
+  line-height: 0.8;
+  float: left;
+  margin: 0.05em 0.1em 0 0;
+  font-weight: bold;
+}
+
+/* ===== Dark Mode Toggle Button ===== */
+#dark-mode-toggle {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: inherit;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s;
+}
+#dark-mode-toggle:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+}
+.masthead .container {
+  position: relative;
+}
+
+/* ===== Dark Mode Overrides ===== */
+body.dark-mode {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(/image/星合之空.png);
+}
+body.dark-mode .content {
+  background-color: #222;
+  box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.3);
+}
+body.dark-mode .masthead {
+  background-color: #1a1a1a;
+}
+body.dark-mode .masthead-title,
+body.dark-mode .masthead-link {
+  color: #e8e6e3;
+}
+body.dark-mode .post-title {
+  color: #e8e6e3 !important;
+}
+body.dark-mode .post-content {
+  color: #e8e6e3 !important;
+}
+body.dark-mode .post-meta {
+  color: rgba(232, 230, 227, 0.6);
+}
+body.dark-mode .post-content h1,
+body.dark-mode .post-content h2,
+body.dark-mode .post-content h3,
+body.dark-mode .post-content h4,
+body.dark-mode .post-content h5,
+body.dark-mode .post-content h6 {
+  color: #e8e6e3;
+}
+body.dark-mode .post-content a {
+  color: #e8e6e3;
+}
+body.dark-mode .post-content blockquote {
+  color: rgba(232, 230, 227, 0.8);
+  border-left-color: rgba(232, 230, 227, 0.3);
+}
+body.dark-mode .section-post-title,
+body.dark-mode .section-page-title,
+body.dark-mode .literature-subtitle {
+  color: #e8e6e3;
+}
+body.dark-mode .poem-card {
+  background-color: #2a2a2a;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+body.dark-mode .poem-title {
+  color: #e8e6e3 !important;
+}
+body.dark-mode .site-footer {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.3) 10%, rgba(0, 0, 0, 0.6) 25%, rgba(0, 0, 0, 0.85) 45%, rgba(0, 0, 0, 0.95) 65%);
+  color: #e8e6e3;
+}
+body.dark-mode .site-footer a {
+  color: #e8e6e3;
+}
+body.dark-mode .site-footer-brand {
+  color: #e8e6e3;
+}
+body.dark-mode .section-post-list li {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+body.dark-mode .post-header,
+body.dark-mode .content .post-header {
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+}
+body.dark-mode .section-post-date {
+  color: rgba(232, 230, 227, 0.5);
+}
+body.dark-mode .section-post-excerpt {
+  color: rgba(232, 230, 227, 0.7);
+}
+body.dark-mode .post-copyright {
+  color: rgba(232, 230, 227, 0.6);
+}
+body.dark-mode #dark-mode-toggle {
+  color: #e8e6e3;
+}
+body.dark-mode #dark-mode-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }

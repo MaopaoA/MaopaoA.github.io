@@ -1,6 +1,7 @@
 ---
 layout: comments
 ---
+<div id="reading-progress-bar"></div>
 <article class="post-article{% if page.path contains '/poem/' %} poem{% endif %}">
   <header class="post-header">
     <h1 class="post-title">{{ page.title }}</h1>
@@ -32,4 +33,26 @@ layout: comments
     <p class="post-copyright">{{ site.post.meta.copyright }}</p>
   </footer>
   {% endif %}
+  {% if page.previous or page.next %}
+  <nav class="post-nav">
+    {% if page.next %}
+    <a href="{{ page.next.url }}" class="post-nav-link post-nav-older">
+      <span class="post-nav-label">← Older</span>
+      <span class="post-nav-title">{{ page.next.title }}</span>
+    </a>
+    {% endif %}
+    {% if page.previous %}
+    <a href="{{ page.previous.url }}" class="post-nav-link post-nav-newer">
+      <span class="post-nav-label">Newer →</span>
+      <span class="post-nav-title">{{ page.previous.title }}</span>
+    </a>
+    {% endif %}
+  </nav>
+  {% endif %}
 </article>
+<script>
+  window.addEventListener('scroll', function() {
+    var scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+    document.getElementById('reading-progress-bar').style.width = Math.min(scrolled, 100) + '%';
+  });
+</script>
