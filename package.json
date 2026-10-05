@@ -1,0 +1,24 @@
+{
+  "name": "maopao-journal",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "npm run build && node scripts/serve.mjs",
+    "test": "npm run build && node scripts/check.mjs",
+    "publish": "npm test && node scripts/publish.mjs"
+  },
+  "dependencies": {
+    "gray-matter": "4.0.3",
+    "markdown-it": "14.1.0",
+    "markdown-it-texmath": "1.0.0",
+    "katex": "0.16.22"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

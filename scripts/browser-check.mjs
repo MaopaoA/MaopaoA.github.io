@@ -1,0 +1,20 @@
+import {chromium} from '@playwright/test';
+import assert from 'node:assert/strict';
+const browser=await chromium.launch(process.env.CHROMIUM_PATH ? {executablePath:process.env.CHROMIUM_PATH} : {});
+const page=await browser.newPage({viewport:{width:1440,height:1050},deviceScaleFactor:1});
+const errors=[];page.on('pageerror',e=>errors.push(e.message));
+await page.goto('http://127.0.0.1:4173/',{waitUntil:'networkidle'});
+await page.screenshot({path:'/tmp/maopao-desktop.png',fullPage:true});
+assert(await page.locator('h1').innerText());
+for(const width of [320,375,390,768,1440]){await page.setViewportSize({width,height:900});await page.reload();assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`No horizontal overflow at ${width}`);}
+await page.setViewportSize({width:390,height:844});await page.screenshot({path:'/tmp/maopao-mobile.png',fullPage:true});
+await page.goto('http://127.0.0.1:4173/archive');
+await page.getByRole('button',{name:'诗歌'}).click();assert.equal(await page.locator('.entry-row:visible').count(),1);
+await page.getByRole('button',{name:'研究',exact:false}).click();assert(await page.locator('.search-empty').isVisible());
+await page.getByRole('button',{name:'全部'}).click();await page.getByRole('searchbox').fill('失忆');assert.equal(await page.locator('.entry-row:visible').count(),1);
+await page.locator('.entry-row:visible').click();const before=await page.locator('.prose').evaluate(e=>getComputedStyle(e).fontSize);await page.getByRole('button',{name:'放大阅读字号'}).click();assert.notEqual(await page.locator('.prose').evaluate(e=>getComputedStyle(e).fontSize),before);
+await page.getByRole('button',{name:'切换夜间阅读'}).click();assert.equal(await page.locator('html').getAttribute('data-theme'),'dark');await page.reload();assert.equal(await page.locator('html').getAttribute('data-theme'),'dark');
+await page.goto('http://127.0.0.1:4173/posts/literature/栗子');assert.equal(await page.locator('.prose h1').count(),0);assert(await page.locator('.prose br').count()>0);await page.screenshot({path:'/tmp/maopao-reading.png',fullPage:true});
+await page.goto('http://127.0.0.1:4173/research');assert(await page.getByText('第一篇手记尚未发表。',{exact:false}).count());
+await page.goto('http://127.0.0.1:4173/not-a-page');assert(await page.getByRole('heading',{name:'此页留白。'}).count());
+assert.deepEqual(errors,[]);await browser.close();console.log('Browser verified: 5 responsive widths, search, filters, empty states, reading size, persistent dark mode, poetry, 404.');

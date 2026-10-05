@@ -44,3 +44,7 @@ node_modules
 bower_components
 
 .tutorial
+
+# Browser verification artifacts
+playwright-report/
+test-results/
