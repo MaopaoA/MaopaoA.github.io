@@ -2,7 +2,9 @@
 
 Live site: https://maopaoa.github.io/
 
-A static blog for fiction, poetry, and AI research. The homepage shows recent and featured articles, search, and the original self-introduction. Articles have adjustable reading size, dark mode, and comments. Readers can search the complete text, filter categories and tags, and subscribe to all posts or individual categories using RSS.
+The original snowy background, Times New Roman typography, centered masthead, avatar, Spotify player, and three-column homepage are rendered by the new Node system. The visual reference is the original repository at commit `b145be4`. Jekyll and the old theme framework are not used to build or display the site.
+
+The homepage keeps Archive / Latest / Literary & Profile; Literary Creation keeps its fiction-and-poetry columns. The right-hand menu contains navigation and full-text search. Articles retain reading controls, dark mode, and comments. RSS supports all posts and individual categories.
 
 ## Add an article
 
@@ -13,7 +15,7 @@ npm run new -- --kind fiction --title "文章标题" --tags "标签1,标签2"
 
 Use `fiction`, `poetry`, or `research` for `--kind`. The command creates a dated Markdown file in the appropriate `_posts` folder and refuses to overwrite an existing file. Optional flags:
 
-- `--featured`: show the article in the homepage's selected section
+- `--featured`: show the article in the homepage's Archive column
 - `--draft`: create it with `published: false`, so it stays out of the website, search, and feeds
 - `--date YYYY-MM-DD`: choose the publication date
 
@@ -39,7 +41,7 @@ Existing articles and their addresses remain unchanged. A leading Markdown `#` t
 
 `content/profile.md` contains the original self-introduction, verbatim. Edit this file to update both the homepage and About page.
 
-`site.config.json` controls profile location, social links, the original Spotify track, and the homepage featured list. Add or remove an article's path under `featured`. Articles marked `featured: true` in their own front matter are also shown. No template changes are required.
+`site.config.json` controls the masthead title, original background and locally stored avatar, profile location, social links, Spotify track, and homepage featured list. Add or remove an article's path under `featured`. Articles marked `featured: true` in their own front matter are also shown in Archive. If no articles are featured, Archive shows three older posts and Latest shows the three newest posts. No template changes are required.
 
 ## Preview and publish
 
@@ -61,7 +63,8 @@ Comments reuse the existing Valine / LeanCloud configuration from `_config.yml`,
 
 ## Development
 
-- `scripts/build.mjs`: Markdown rendering, page templates, feeds, sitemap, full-text search index
+- `scripts/build.mjs`: Markdown rendering, pages, feeds, sitemap, full-text search index
+- `scripts/presentation.mjs`: restored masthead, menu, homepage, profile, and literature layout
 - `assets/site.css`: responsive layouts and typography
 - `assets/site.js`: search, filters, reader settings, subscription controls, comments
 - `npm test`: original profile preservation, article coverage, links, comment thread identifiers, full-text search data, category feeds, and an isolated author workflow test for creation, tags, drafts, featuring, and research math

@@ -25,10 +25,10 @@ if(search){
  tagSelect?.addEventListener('change',()=>{tag=tagSelect.value;applyFilter();});
 }
 
-let size=20;try{size=Math.min(26,Math.max(16,Number(localStorage.getItem('maopao-font'))||20));}catch{}
+let size=22.5;try{size=Math.min(26,Math.max(16,Number(localStorage.getItem('maopao-font-legacy'))||22.5));}catch{}
 const prose=document.querySelector('.prose');
 function setFont(){prose?.style.setProperty('--reading-size',`${size}px`);document.querySelector('[data-font="smaller"]')?.toggleAttribute('disabled',size<=16);document.querySelector('[data-font="larger"]')?.toggleAttribute('disabled',size>=26);}
-setFont();document.querySelectorAll('[data-font]').forEach(b=>b.addEventListener('click',()=>{size=Math.min(26,Math.max(16,size+(b.dataset.font==='larger'?2:-2)));setFont();try{localStorage.setItem('maopao-font',size);}catch{}}));
+setFont();document.querySelectorAll('[data-font]').forEach(b=>b.addEventListener('click',()=>{size=Math.min(26,Math.max(16,size+(b.dataset.font==='larger'?2:-2)));setFont();try{localStorage.setItem('maopao-font-legacy',size);}catch{}}));
 const progress=document.querySelector('.reading-progress');if(progress){let queued=false;const update=()=>{const max=document.documentElement.scrollHeight-innerHeight;progress.style.transform=`scaleX(${max>0?Math.min(1,Math.max(0,scrollY/max)):1})`;queued=false;};addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(update);}},{passive:true});addEventListener('resize',update);update();}
 
 const copy=document.querySelector('[data-copy-feed]');copy?.addEventListener('click',async()=>{const input=document.querySelector('#feed-url');const status=document.querySelector('.copy-status');try{await navigator.clipboard.writeText(input.value);status.textContent='已复制订阅地址。';}catch{input.focus();input.select();status.textContent='请复制已选中的订阅地址。';}});
@@ -54,3 +54,23 @@ async function showComments(){
 loadComments?.addEventListener('click',showComments);
 addEventListener('hashchange',()=>{if(location.hash==='#comments')showComments();});
 if(location.hash==='#comments')showComments();
+
+const menu=document.querySelector('.site-menu');
+const menuToggle=document.querySelector('.menu-toggle');
+const menuBackdrop=document.querySelector('.menu-backdrop');
+function setMenu(open){
+ menu.hidden=!open;menuBackdrop.hidden=!open;menuToggle.setAttribute('aria-expanded',String(open));document.body.style.overflow=open?'hidden':'';
+ if(open){menu.querySelector('.menu-close').focus();}else{menuToggle.focus();}
+}
+menuToggle?.addEventListener('click',()=>setMenu(menu.hidden));
+menuBackdrop?.addEventListener('click',()=>setMenu(false));
+menu?.querySelector('.menu-close')?.addEventListener('click',()=>setMenu(false));
+menu?.addEventListener('keydown',event=>{
+ if(event.key==='Escape'){event.preventDefault();setMenu(false);return;}
+ if(event.key==='Tab'){
+  const focusable=[...menu.querySelectorAll('a,button,input')].filter(e=>!e.disabled);
+  const first=focusable[0],last=focusable.at(-1);
+  if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+  else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+ }
+});

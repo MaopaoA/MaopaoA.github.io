@@ -21,9 +21,33 @@ if(process.argv.includes('--comments-only')){
  await browser.close();process.exit(0);
 }
 
-await page.goto(base+'/',{waitUntil:'networkidle'});
+if(process.argv.includes('--appearance-only')){
+ await page.goto(base+'/',{waitUntil:'domcontentloaded'});
+ await page.waitForFunction(()=>document.querySelector('.home-profile-avatar img')?.naturalWidth>0);
+ assert.equal((await page.locator('.home-three-col').evaluate(e=>getComputedStyle(e).gridTemplateColumns)).split(' ').length,3);
+ await page.screenshot({path:'/tmp/maopao-desktop.png',fullPage:true});
+ await page.setViewportSize({width:390,height:844});
+ await page.goto(base+'/',{waitUntil:'domcontentloaded'});
+ const moon=await page.locator('.theme-toggle').boundingBox();const menu=await page.locator('.menu-toggle').boundingBox();
+ assert(moon.x+moon.width<=menu.x,'Mobile controls do not overlap');
+ await page.screenshot({path:'/tmp/maopao-mobile.png',fullPage:true});
+ await page.setViewportSize({width:1440,height:1050});
+ await page.goto(base+'/literature',{waitUntil:'domcontentloaded'});
+ assert.equal(await page.locator('.literature-layout').evaluate(e=>getComputedStyle(e).flexDirection),'row');
+ await page.screenshot({path:'/tmp/maopao-literature.png',fullPage:true});
+ await page.goto(base+'/posts/literature/失忆',{waitUntil:'domcontentloaded'});
+ assert.equal(await page.locator('.prose').evaluate(e=>getComputedStyle(e).fontSize),'22.5px');
+ assert.equal(await page.locator('.prose p').first().evaluate(e=>getComputedStyle(e).textIndent),'45px');
+ await page.screenshot({path:'/tmp/maopao-article.png'});
+ assert.deepEqual(errors,[]);await browser.close();console.log('Appearance verified: original three columns, literature columns, Times typography, paragraph indentation, separate mobile controls.');process.exit(0);
+}
+await page.goto(base+'/',{waitUntil:'domcontentloaded'});
+await page.waitForFunction(()=>document.querySelector('.home-profile-avatar img')?.complete&&document.querySelector('.home-profile-avatar img')?.naturalWidth>0);
 assert((await page.locator('.profile-text').innerText()).trim()===fs.readFileSync('content/profile.md','utf8').trim(),'Original introduction preserved verbatim');
-assert.equal(await page.locator('.entry-row').count(),6);
+assert.equal(await page.locator('.home-card').count(),6);
+assert((await page.locator('body').evaluate(e=>getComputedStyle(e).fontFamily)).includes('Times New Roman'));
+assert((await page.locator('body').evaluate(e=>getComputedStyle(e).backgroundImage)).includes('png'));
+assert.equal(await page.locator('.home-profile-avatar img').getAttribute('src'),'/image/avatar.png');
 await page.screenshot({path:'/tmp/maopao-desktop.png',fullPage:true});
 for(const width of [320,375,390,768,1440]){
  await page.setViewportSize({width,height:900});
@@ -33,6 +57,12 @@ for(const width of [320,375,390,768,1440]){
  }
 }
 await page.setViewportSize({width:390,height:844});await page.goto(base+'/');await page.screenshot({path:'/tmp/maopao-mobile.png',fullPage:true});
+await page.getByRole('button',{name:'打开菜单'}).click();
+assert(await page.locator('#site-menu').isVisible());
+await page.keyboard.press('Escape');
+assert(!(await page.locator('#site-menu').isVisible()));
+assert.equal(await page.locator('.menu-toggle').getAttribute('aria-expanded'),'false');
+await page.getByRole('button',{name:'打开菜单'}).click();
 await page.locator('#home-query').fill('IPS');await page.getByRole('button',{name:'搜索',exact:true}).click();
 await page.waitForFunction(()=>document.querySelectorAll('.entry-row:not([hidden])').length===1);
 assert((await page.locator('.entry-row:visible').innerText()).includes('失忆'),'Search finds a term deep inside the article');
