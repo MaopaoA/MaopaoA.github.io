@@ -285,6 +285,7 @@ post:
 
 valine:
   enable: true
+  serverURLs: https://9habrdds.lc-cn-n1-shared.com
   autoloader: /public/js/valine.js
   src: //cdn.jsdelivr.net/npm/valine
   appId: 9hABRddSuEkTgqLrt1VSK5B1-gzGzoHsz

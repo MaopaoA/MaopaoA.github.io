@@ -1,0 +1,30 @@
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import {spawnSync} from 'node:child_process';
+import assert from 'node:assert/strict';
+const source=process.cwd();const fixture=fs.mkdtempSync(path.join(os.tmpdir(),'maopao-author-'));
+const run=(script,args=[])=>spawnSync(process.execPath,[path.join(source,'scripts',script),...args],{cwd:fixture,encoding:'utf8'});
+try{
+ fs.mkdirSync(path.join(fixture,'assets'));for(const file of ['site.css','site.js','theme.js','favicon.svg'])fs.copyFileSync(path.join(source,'assets',file),path.join(fixture,'assets',file));
+ fs.mkdirSync(path.join(fixture,'image'));fs.cpSync(path.join(source,'content'),path.join(fixture,'content'),{recursive:true});
+ for(const file of ['site.config.json','_config.yml'])fs.copyFileSync(path.join(source,file),path.join(fixture,file));
+ fs.symlinkSync(path.join(source,'node_modules'),path.join(fixture,'node_modules'),'dir');
+ assert.equal(run('new-post.mjs',['--kind','research','--title','测试研究','--tags','理论,笔记','--featured','--date','2026-10-05']).status,0);
+ assert.equal(run('new-post.mjs',['--kind','poetry','--title','未发表','--draft','--date','2026-10-05']).status,0);
+ assert.notEqual(run('new-post.mjs',['--kind','fiction','--title','无效日期','--date','2026-02-30']).status,0,'Invalid calendar dates rejected');
+ const file=path.join(fixture,'_posts/research/2026-10-05-测试研究.md');
+ fs.appendFileSync(file,'\n唯一正文词汇。\n\n$$x^2 + y^2 = z^2$$\n');
+ const prior=fs.readFileSync(file,'utf8');
+ assert.notEqual(run('new-post.mjs',['--kind','research','--title','测试研究','--date','2026-10-05']).status,0,'Existing article cannot be overwritten');
+ assert.equal(fs.readFileSync(file,'utf8'),prior);
+ const built=run('build.mjs');assert.equal(built.status,0,built.stderr);
+ const read=name=>fs.readFileSync(path.join(fixture,'_site',name),'utf8');
+ const index=JSON.parse(read('search-index.json'));assert.equal(index.length,1,'Draft excluded from index');assert.deepEqual(index[0].tags,['理论','笔记']);assert.equal(index[0].kind,'research');assert(index[0].text.includes('唯一正文词汇'));
+ assert(read('index.html').includes('selected-card research'),'Author-selected article featured');
+ assert(read('archive/index.html').includes('value="理论"'),'Tags available as filters');
+ assert(read('posts/research/测试研究/index.html').includes('katex-display'),'Research math rendered');
+ assert(!read('atom.xml').includes('未发表'),'Draft excluded from subscription');
+ assert(!fs.existsSync(path.join(fixture,'_site/posts/literature/未发表')),'Draft not rendered');
+ console.log('Author workflow verified: creation, categories, tags, featuring, drafts, math, valid dates, overwrite protection.');
+}finally{fs.rmSync(fixture,{recursive:true,force:true});}

@@ -1,0 +1,11 @@
+{
+  "name": "Maopao",
+  "url": "https://maopaoa.github.io",
+  "profile": "content/profile.md",
+  "featured": ["/posts/literature/望向黑色的眼睛", "/posts/literature/栗子"],
+  "social": [
+    {"label": "GitHub", "url": "https://github.com/MaopaoA"},
+    {"label": "知乎", "url": "https://www.zhihu.com/people/maopao666/activities"}
+  ],
+  "music": "https://open.spotify.com/embed/track/0bevUQP600u2psHdSWljCC?utm_source=generator"
+}

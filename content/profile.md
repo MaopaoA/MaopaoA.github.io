@@ -1,0 +1,1 @@
+This is the small site of a former Chinese boy, used to document his chaotic and bitter exploration of a world he has not yet truly experienced. You might find content related to: literature, mathematics, artificial intelligence, earth sciences, Japanese, anime, games, and history.

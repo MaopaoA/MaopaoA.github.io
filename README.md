@@ -1,50 +1,70 @@
-# Maopao · 写作与研究
-
-A bilingual literary journal for fiction, poetry, and research on artificial intelligence. Warm paper, serif typography, vermilion accents, and original vector illustrations frame the work. Responsive reading pages include persistent dark mode, adjustable type size, and a reading progress indicator.
+# Maopao's blog
 
 Live site: https://maopaoa.github.io/
 
-## Writing and publishing
+A static blog for fiction, poetry, and AI research. The homepage shows recent and featured articles, search, and the original self-introduction. Articles have adjustable reading size, dark mode, and comments. Readers can search the complete text, filter categories and tags, and subscribe to all posts or individual categories using RSS.
 
-All 14 original works remain in `_posts`, unchanged. Create new Markdown files in:
+## Add an article
 
-- `_posts/literature/novel/` for fiction
-- `_posts/literature/poem/` for poetry
-- `_posts/research/` for AI research and observations
+```sh
+npm ci
+npm run new -- --kind fiction --title "文章标题" --tags "标签1,标签2"
+```
 
-Use a filename such as `2026-10-05-文章标题.md` and this front matter:
+Use `fiction`, `poetry`, or `research` for `--kind`. The command creates a dated Markdown file in the appropriate `_posts` folder and refuses to overwrite an existing file. Optional flags:
+
+- `--featured`: show the article in the homepage's selected section
+- `--draft`: create it with `published: false`, so it stays out of the website, search, and feeds
+- `--date YYYY-MM-DD`: choose the publication date
+
+Edit the created file and write the article below its front matter. Or create a Markdown file yourself:
 
 ```yaml
 ---
 title: 文章标题
 date: 2026-10-05
-# Optional: description, permalink
+kind: research
+tags: [标签1, 标签2]
+featured: true
+published: true
+# Optional: description (your own excerpt), permalink (a stable article address)
 ---
 ```
 
-Write the article below the front matter. A leading `#` title is optional and omitted from the reader to prevent a duplicate title. Poetry supports Markdown hard line breaks (two trailing spaces). Research supports `$...$` inline math and `$$...$$` display math through KaTeX, code blocks, tables, and footnotes written as ordinary Markdown links. Dates come from your front matter; existing filename/date differences are preserved.
+Folders: `_posts/literature/novel/` for fiction, `_posts/literature/poem/` for poetry, `_posts/research/` for research. Without `kind`, the folder sets the category. Remove `featured: true` to unfeature an article. Set `published: false` to hide a draft. Draft files committed to this public repository are still publicly accessible on GitHub; this flag only excludes them from the rendered blog.
+
+Existing articles and their addresses remain unchanged. A leading Markdown `#` title is optional and is omitted from the reader to prevent a duplicate heading. Poetry supports hard line breaks (two trailing spaces). Articles support code blocks, tables, links, and `$...$` / `$$...$$` math.
+
+## Update the profile and featured list
+
+`content/profile.md` contains the original self-introduction, verbatim. Edit this file to update both the homepage and About page.
+
+`site.config.json` controls profile location, social links, the original Spotify track, and the homepage featured list. Add or remove an article's path under `featured`. Articles marked `featured: true` in their own front matter are also shown. No template changes are required.
+
+## Preview and publish
 
 ```sh
-npm ci
-npm run dev       # Preview at http://127.0.0.1:4173
-npm run publish   # Build, validate, and copy the final site to the publishing root
+npm run dev       # http://127.0.0.1:4173
+npm run publish   # Builds, checks, and copies the final site to the publishing root
 git add .
-git commit -m "Publish new writing"
+git commit -m "Update blog"
 git push origin master
 ```
 
-GitHub Pages continues to publish from `master` / root. The committed `.nojekyll` file serves the compiled HTML directly. No Jekyll or Ruby installation is needed. The verification workflow checks the build and requires committed output to match source. The old Jekyll files remain for reference, but are no longer used for rendering. Existing `/posts/literature/...` article addresses are retained; `/math`, `/career`, `/resume`, `/tags`, and `/comments` lead to their new destinations.
+GitHub Pages publishes from `master` / root. `.nojekyll` serves compiled HTML directly; Ruby and Jekyll are not needed. The verification workflow checks that committed output matches the source.
+
+## Comments and subscriptions
+
+Comments reuse the existing Valine / LeanCloud configuration from `_config.yml`, including app settings and the original URL-based thread identifiers. Valine and its LeanCloud SDK are bundled locally and load when a reader chooses to view or write comments. The configuration uses the verified current API endpoint for the existing account. Existing comments remain stored in your existing service. Manage them through the same LeanCloud account. `valine.serverURLs` can be set in `_config.yml` if the service uses a custom API domain.
+
+`/subscribe` provides a copyable RSS address and links to category feeds. The all-posts feed remains at `/atom.xml`; category feeds are `/feeds/fiction.xml`, `/feeds/poetry.xml`, and `/feeds/research.xml`. All feeds contain the article's full text.
 
 ## Development
 
-- `scripts/build.mjs`: Markdown rendering, pages, Atom feed, sitemap, metadata
-- `assets/site.css`: visual design and responsive styles
-- `assets/site.js`: archive search, filters, reading controls, theme, progress
-- `npm test`: source coverage, all internal links, unique article addresses, poetry formatting, HTML structure
-- `npx playwright install chromium` then `node scripts/browser-check.mjs`: five viewport sizes and browser interactions. Set `CHROMIUM_PATH` to use an existing Chromium installation.
+- `scripts/build.mjs`: Markdown rendering, page templates, feeds, sitemap, full-text search index
+- `assets/site.css`: responsive layouts and typography
+- `assets/site.js`: search, filters, reader settings, subscription controls, comments
+- `npm test`: original profile preservation, article coverage, links, comment thread identifiers, full-text search data, category feeds, and an isolated author workflow test for creation, tags, drafts, featuring, and research math
+- `node scripts/browser-check.mjs`: browser checks at five screen widths, reading controls, search, comments UI, and subscriptions. Run `npx playwright install chromium` first if no browser is installed. `CHROMIUM_PATH` can select an existing Chromium.
 
-The AI research collection stays empty until you publish your own work. Site copy uses existing profile information and themes from the writing; no research, credentials, or achievements have been invented.
-
-## Credits and licensing
-
-The original site was based on [wu-kan/wu-kan.github.io](https://github.com/wu-kan/wu-kan.github.io). Historical theme files and the original LICENSE are retained. Unless otherwise stated, writing is licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.zh). The Chinese serif webfont is Noto Serif SC, with native Songti fallbacks; the site remains usable without external fonts. KaTeX font assets are bundled locally.
+Historical theme files and the original LICENSE remain. The previous site was based on [wu-kan/wu-kan.github.io](https://github.com/wu-kan/wu-kan.github.io). Unless otherwise stated, writing is licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.zh). Noto Serif SC has native Songti fallbacks. KaTeX and Valine assets retain their bundled licenses.
