@@ -37,7 +37,10 @@ function write(url,html) {const target = url.endsWith('.html') ? path.join(out,u
 function row(p,i) {return `<a class="entry-row" href="${link(p)}" data-kind="${p.kind}" data-search="${esc(p.title+' '+p.excerpt)}"><span class="entry-number">${String(i+1).padStart(2,'0')}</span><div class="entry-text"><h3>${esc(p.title)}</h3><p>${esc(p.excerpt.slice(0,95))}${p.excerpt.length>95?'…':''}</p></div><div class="entry-meta"><span>${labels[p.kind]}</span><time datetime="${p.date.toISOString()}">${date(p)}</time></div><span class="entry-arrow" aria-hidden="true">↗</span></a>`;}
 fs.mkdirSync(out,{recursive:true});
 fs.cpSync('assets',path.join(out,'assets'),{recursive:true});
-fs.cpSync('node_modules/katex/dist',path.join(out,'assets/katex'),{recursive:true});
+fs.mkdirSync(path.join(out,'assets/katex'),{recursive:true});
+fs.cpSync('node_modules/katex/dist/fonts',path.join(out,'assets/katex/fonts'),{recursive:true});
+fs.copyFileSync('node_modules/katex/dist/katex.min.css',path.join(out,'assets/katex/katex.min.css'));
+fs.copyFileSync('node_modules/katex/LICENSE',path.join(out,'assets/katex/LICENSE'));
 fs.cpSync('image',path.join(out,'image'),{recursive:true});
 fs.writeFileSync(path.join(out,'.nojekyll'),'');
 const fiction = posts.filter(p=>p.kind==='fiction');
