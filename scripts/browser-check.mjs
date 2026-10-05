@@ -21,7 +21,36 @@ if(process.argv.includes('--comments-only')){
  await browser.close();process.exit(0);
 }
 
+async function verifyEditorialLayout(){
+ for(const width of [320,390,768,1440]){
+  await page.setViewportSize({width,height:900});
+  for(const route of ['/','/literature']){
+   await page.goto(base+route,{waitUntil:'domcontentloaded'});
+   const main=await page.locator('.content').boundingBox();
+   const footer=await page.locator('.site-footer').boundingBox();
+   assert(Math.abs(main.x-footer.x)<1&&Math.abs(main.width-footer.width)<1,`Footer aligns with content at ${width}: ${route}`);
+   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+   if(route==='/literature')assert(parseFloat(await page.locator('.collection-head h1').evaluate(e=>getComputedStyle(e).fontSize))<=36);
+   for(const theme of ['light','dark']){
+    await page.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);
+    const gradient=await page.locator('.site-footer').evaluate(e=>getComputedStyle(e).backgroundImage);
+    assert(gradient.startsWith(`linear-gradient(rgb(${theme==='light'?'255, 255, 255':'34, 34, 34'}) 0%`),gradient);
+    assert(gradient.endsWith(', 0) 100%)'),gradient);
+   }
+   await page.evaluate(()=>document.documentElement.dataset.theme='light');
+  }
+ }
+ await page.keyboard.press('/');
+ assert.equal(await page.locator('#home-query').evaluate(e=>e===document.activeElement),true);
+ assert(await page.locator('.content').evaluate(e=>e.inert));
+ await page.keyboard.press('Escape');
+ assert(!(await page.locator('.content').evaluate(e=>e.inert)));
+ await page.setViewportSize({width:1440,height:1050});
+ console.log('Editorial checks passed: aligned footer, white-to-transparent and dark gradients, restrained titles, four widths, keyboard search and modal focus.');
+}
+
 if(process.argv.includes('--appearance-only')){
+ await verifyEditorialLayout();
  await page.goto(base+'/',{waitUntil:'domcontentloaded'});
  await page.waitForFunction(()=>document.querySelector('.home-profile-avatar img')?.naturalWidth>0);
  assert.equal((await page.locator('.home-three-col').evaluate(e=>getComputedStyle(e).gridTemplateColumns)).split(' ').length,3);
@@ -39,6 +68,10 @@ if(process.argv.includes('--appearance-only')){
  assert.equal(await page.locator('.prose').evaluate(e=>getComputedStyle(e).fontSize),'22.5px');
  assert.equal(await page.locator('.prose p').first().evaluate(e=>getComputedStyle(e).textIndent),'45px');
  await page.screenshot({path:'/tmp/maopao-article.png'});
+ await page.locator('.reading-end').scrollIntoViewIfNeeded();
+ await page.waitForFunction(()=>getComputedStyle(document.querySelector('.reading-progress')).transform==='matrix(1, 0, 0, 1, 0, 0)');
+ assert(await page.locator('.comments-section').count(),'Progress completes before the comments');
+
  assert.deepEqual(errors,[]);await browser.close();console.log('Appearance verified: original three columns, literature columns, Times typography, paragraph indentation, separate mobile controls.');process.exit(0);
 }
 await page.goto(base+'/',{waitUntil:'domcontentloaded'});

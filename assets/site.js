@@ -29,7 +29,20 @@ let size=22.5;try{size=Math.min(26,Math.max(16,Number(localStorage.getItem('maop
 const prose=document.querySelector('.prose');
 function setFont(){prose?.style.setProperty('--reading-size',`${size}px`);document.querySelector('[data-font="smaller"]')?.toggleAttribute('disabled',size<=16);document.querySelector('[data-font="larger"]')?.toggleAttribute('disabled',size>=26);}
 setFont();document.querySelectorAll('[data-font]').forEach(b=>b.addEventListener('click',()=>{size=Math.min(26,Math.max(16,size+(b.dataset.font==='larger'?2:-2)));setFont();try{localStorage.setItem('maopao-font-legacy',size);}catch{}}));
-const progress=document.querySelector('.reading-progress');if(progress){let queued=false;const update=()=>{const max=document.documentElement.scrollHeight-innerHeight;progress.style.transform=`scaleX(${max>0?Math.min(1,Math.max(0,scrollY/max)):1})`;queued=false;};addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(update);}},{passive:true});addEventListener('resize',update);update();}
+const progress=document.querySelector('.reading-progress');
+if(progress&&prose){
+ let queued=false;
+ const update=()=>{
+  const bounds=prose.getBoundingClientRect();
+  const start=bounds.top+scrollY;
+  const end=Math.max(start,bounds.bottom+scrollY-innerHeight);
+  const fraction=end>start?(scrollY-start)/(end-start):(bounds.bottom<=innerHeight?1:0);
+  progress.style.transform=`scaleX(${Math.min(1,Math.max(0,fraction))})`;queued=false;
+ };
+ const schedule=()=>{if(!queued){queued=true;requestAnimationFrame(update);}};
+ addEventListener('scroll',schedule,{passive:true});addEventListener('resize',schedule);
+ new ResizeObserver(schedule).observe(prose);update();
+}
 
 const copy=document.querySelector('[data-copy-feed]');copy?.addEventListener('click',async()=>{const input=document.querySelector('#feed-url');const status=document.querySelector('.copy-status');try{await navigator.clipboard.writeText(input.value);status.textContent='已复制订阅地址。';}catch{input.focus();input.select();status.textContent='请复制已选中的订阅地址。';}});
 
@@ -60,6 +73,7 @@ const menuToggle=document.querySelector('.menu-toggle');
 const menuBackdrop=document.querySelector('.menu-backdrop');
 function setMenu(open){
  menu.hidden=!open;menuBackdrop.hidden=!open;menuToggle.setAttribute('aria-expanded',String(open));document.body.style.overflow=open?'hidden':'';
+ document.querySelectorAll('.masthead,.content,.site-footer,.theme-toggle,.menu-toggle,.skip-link').forEach(element=>{element.inert=open;});
  if(open){menu.querySelector('.menu-close').focus();}else{menuToggle.focus();}
 }
 menuToggle?.addEventListener('click',()=>setMenu(menu.hidden));
@@ -73,4 +87,11 @@ menu?.addEventListener('keydown',event=>{
   if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
   else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
  }
+});
+
+// A search shortcut without adding another control to the page.
+addEventListener('keydown',event=>{
+ if(event.key!=='/'||event.ctrlKey||event.metaKey||event.altKey||event.target.closest('input,textarea,select,[contenteditable]'))return;
+ event.preventDefault();
+ if(search){search.focus();}else if(menu){setMenu(true);menu.querySelector('#home-query')?.focus();}
 });
