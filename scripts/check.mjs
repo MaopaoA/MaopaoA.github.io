@@ -15,6 +15,11 @@ const sample=fs.readFileSync(path.join(root,'posts/literature/栗子/index.html'
 const profile=fs.readFileSync('content/profile.md','utf8').trim();
 for(const url of ['index.html','about/index.html']) assert(fs.readFileSync(path.join(root,url),'utf8').includes(profile),'Original introduction preserved verbatim');
 const home=fs.readFileSync(path.join(root,'index.html'),'utf8');
+const categories=home.match(/<nav class="home-sections-nav"[^>]*>(.*?)<\/nav>/)[1];
+assert.equal((categories.match(/<a /g)||[]).length,2,'Homepage has one literary and one science section');
+assert(categories.includes('/literature')&&categories.includes('/research'));
+assert(!home.includes('Career Progression')&&!home.includes('href="/math"'));
+assert(fs.readFileSync(path.join(root,'math/index.html'),'utf8').includes('location.replace("/research")'));
 assert(home.includes('home-three-col'),'Original three-column layout restored');
 assert(home.includes('/image/avatar.png'),'Original avatar restored');
 assert(home.includes('/image/星合之空.png'),'Original background restored');

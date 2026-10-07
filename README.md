@@ -71,3 +71,5 @@ Comments reuse the existing Valine / LeanCloud configuration from `_config.yml`,
 - `node scripts/browser-check.mjs`: browser checks at five screen widths, reading controls, search, comments UI, and subscriptions. Run `npx playwright install chromium` first if no browser is installed. `CHROMIUM_PATH` can select an existing Chromium.
 
 Historical theme files and the original LICENSE remain. The previous site was based on [wu-kan/wu-kan.github.io](https://github.com/wu-kan/wu-kan.github.io). Unless otherwise stated, writing is licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.zh). Noto Serif SC has native Songti fallbacks. KaTeX and Valine assets retain their bundled licenses.
+
+The main navigation has two subject sections: Literary Creation (fiction and poetry) and Math & AI (the `research` category, including mathematics). Existing `/math` links redirect to `/research`; the retired `/career` page redirects to the archive.

@@ -101,7 +101,7 @@ await page.waitForFunction(()=>document.querySelectorAll('.entry-row:not([hidden
 assert((await page.locator('.entry-row:visible').innerText()).includes('失忆'),'Search finds a term deep inside the article');
 await page.getByRole('searchbox').fill('');
 await page.getByRole('button',{name:'诗歌'}).click();assert.equal(await page.locator('.entry-row:visible').count(),1);
-await page.getByRole('button',{name:'AI 研究',exact:false}).click();assert(await page.locator('.search-empty').isVisible());
+await page.getByRole('button',{name:'数学与 AI',exact:false}).click();assert(await page.locator('.search-empty').isVisible());
 await page.getByRole('button',{name:'全部'}).click();await page.getByRole('searchbox').fill('失忆');assert.equal(await page.locator('.entry-row:visible').count(),1);
 await page.locator('.entry-row:visible').click();
 const before=await page.locator('.prose').evaluate(e=>getComputedStyle(e).fontSize);await page.getByRole('button',{name:'放大阅读字号'}).click();assert.notEqual(await page.locator('.prose').evaluate(e=>getComputedStyle(e).fontSize),before);
