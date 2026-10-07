@@ -73,3 +73,11 @@ Comments reuse the existing Valine / LeanCloud configuration from `_config.yml`,
 Historical theme files and the original LICENSE remain. The previous site was based on [wu-kan/wu-kan.github.io](https://github.com/wu-kan/wu-kan.github.io). Unless otherwise stated, writing is licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.zh). Noto Serif SC has native Songti fallbacks. KaTeX and Valine assets retain their bundled licenses.
 
 The main navigation has two subject sections: Literary Creation (fiction and poetry) and Math & AI (the `research` category, including mathematics). Existing `/math` links redirect to `/research`; the retired `/career` page redirects to the archive.
+
+## Reading and sharing
+
+On narrow screens, Literary Creation switches between novels/essays and poetry at the top of the page; `/literature#poems` opens poetry directly. Desktop retains both columns. Poetry and prose remember separate font sizes. Poetry preserves stanza breaks and spaces; prose uses a flush-left opening paragraph followed by two-character indentation at every screen size.
+
+Sharing uses the article title, canonical URL, the author-provided `description` (or the original opening line), and `/image/share.png`. Set `share_image: /image/your-cover.png` in an article’s front matter to use a custom raster cover. No generated summaries are added. Native sharing is used when available; otherwise the share button copies the link.
+
+`node scripts/reading-check.mjs` checks mobile reading and navigation using the local preview (port 4179 by default; override with `SITE_URL`). Start it with `PORT=4179 node scripts/serve.mjs`.

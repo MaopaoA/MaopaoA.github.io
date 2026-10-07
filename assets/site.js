@@ -25,10 +25,13 @@ if(search){
  tagSelect?.addEventListener('change',()=>{tag=tagSelect.value;applyFilter();});
 }
 
-let size=22.5;try{size=Math.min(26,Math.max(16,Number(localStorage.getItem('maopao-font-legacy'))||22.5));}catch{}
 const prose=document.querySelector('.prose');
-function setFont(){prose?.style.setProperty('--reading-size',`${size}px`);document.querySelector('[data-font="smaller"]')?.toggleAttribute('disabled',size<=16);document.querySelector('[data-font="larger"]')?.toggleAttribute('disabled',size>=26);}
-setFont();document.querySelectorAll('[data-font]').forEach(b=>b.addEventListener('click',()=>{size=Math.min(26,Math.max(16,size+(b.dataset.font==='larger'?2:-2)));setFont();try{localStorage.setItem('maopao-font-legacy',size);}catch{}}));
+const poem=!!document.querySelector('.poem-reading');
+const fontKey=poem?'maopao-font-poetry':'maopao-font-legacy';
+const defaultSize=poem?25:22.5;
+let size=defaultSize;try{size=Math.min(30,Math.max(20,Number(localStorage.getItem(fontKey))||defaultSize));}catch{}
+function setFont(){prose?.style.setProperty('--reading-size',`${size}px`);document.querySelector('[data-font="smaller"]')?.toggleAttribute('disabled',size<=20);document.querySelector('[data-font="larger"]')?.toggleAttribute('disabled',size>=30);}
+setFont();document.querySelectorAll('[data-font]').forEach(b=>b.addEventListener('click',()=>{size=Math.min(30,Math.max(20,size+(b.dataset.font==='larger'?2:-2)));setFont();try{localStorage.setItem(fontKey,size);}catch{}}));
 const progress=document.querySelector('.reading-progress');
 if(progress&&prose){
  let queued=false;
@@ -94,4 +97,18 @@ addEventListener('keydown',event=>{
  if(event.key!=='/'||event.ctrlKey||event.metaKey||event.altKey||event.target.closest('input,textarea,select,[contenteditable]'))return;
  event.preventDefault();
  if(search){search.focus();}else if(menu){setMenu(true);menu.querySelector('#home-query')?.focus();}
+});
+
+const literatureSwitch=document.querySelector('.literature-switch');
+if(literatureSwitch){
+ const section=literatureSwitch.closest('.section-page');
+ function selectLiterature(){const view=location.hash==='#poems'?'poems':'novels';section.dataset.mobileView=view;literatureSwitch.querySelectorAll('a').forEach(a=>a.setAttribute('aria-current',String(a.dataset.literatureView===view)));}
+ literatureSwitch.addEventListener('click',event=>{const link=event.target.closest('a');if(!link||!matchMedia('(max-width:63.99em)').matches)return;event.preventDefault();history.pushState(null,'',link.hash);selectLiterature();});
+ addEventListener('hashchange',selectLiterature);addEventListener('popstate',selectLiterature);selectLiterature();
+}
+document.querySelector('[data-share]')?.addEventListener('click',async()=>{
+ const status=document.querySelector('.share-status');const url=document.querySelector('link[rel=canonical]').href;
+ const title=document.querySelector('.reading-head h1').textContent;
+ try{if(navigator.share){await navigator.share({title,url});}else{await navigator.clipboard.writeText(url);status.textContent='文章链接已复制。';}}
+ catch(error){if(error.name==='AbortError')return;status.textContent='请复制浏览器地址栏中的文章链接。';}
 });
