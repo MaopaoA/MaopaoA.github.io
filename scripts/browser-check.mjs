@@ -66,7 +66,8 @@ if(process.argv.includes('--appearance-only')){
  await page.screenshot({path:'/tmp/maopao-literature.png',fullPage:true});
  await page.goto(base+'/posts/literature/失忆',{waitUntil:'domcontentloaded'});
  assert.equal(await page.locator('.prose').evaluate(e=>getComputedStyle(e).fontSize),'22.5px');
- assert.equal(await page.locator('.prose p').first().evaluate(e=>getComputedStyle(e).textIndent),'45px');
+ assert.equal(await page.locator('.prose p').first().evaluate(e=>getComputedStyle(e).textIndent),'0px');
+ assert.equal(await page.locator('.prose p').nth(1).evaluate(e=>getComputedStyle(e).textIndent),'45px');
  await page.screenshot({path:'/tmp/maopao-article.png'});
  await page.locator('.reading-end').scrollIntoViewIfNeeded();
  await page.waitForFunction(()=>getComputedStyle(document.querySelector('.reading-progress')).transform==='matrix(1, 0, 0, 1, 0, 0)');
