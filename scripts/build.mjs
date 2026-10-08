@@ -6,6 +6,7 @@ import MarkdownIt from 'markdown-it';
 import texmath from 'markdown-it-texmath';
 import katex from 'katex';
 import {createPresentation} from './presentation.mjs';
+import {poetryPreview} from './poetry-preview.mjs';
 
 const config = JSON.parse(fs.readFileSync('site.config.json', 'utf8'));
 const legacy = matter(`---\n${fs.readFileSync('_config.yml', 'utf8')}\n---`).data;
@@ -34,8 +35,7 @@ const posts = walk('_posts').filter(p => p.endsWith('.md')).filter(file => matte
   const rendered = md.render(body);
   const html = kind==='poetry' ? rendered.replace(/<br>\n/g,'<br>').replace(/\n<\/p>/g,'</p>') : rendered;
   const excerpt = data.description || text(md.render(body.split('\n').filter(l => l.trim() && !/^\s*#/.test(l))[0] || ''));
-  const previewLines=kind==='poetry'?body.trim().split(/\r?\n\s*\r?\n/)[0].split(/\r?\n/).slice(0,3).map(line=>line.trimEnd()):[];
-  const previewHTML=kind==='poetry'?md.render([...previewLines,'…'].join('  \n')):'';
+  const previewHTML=kind==='poetry'?md.render(poetryPreview(body)):'';
   const tags = data.tags ? (Array.isArray(data.tags) ? data.tags : [data.tags]).map(String) : [];
   return {...data, file, date, kind, body, tags, excerpt, previewHTML, url, html, fulltext:text(html), minutes:Math.max(1,Math.ceil(body.replace(/\s/g,'').length/400))};
 }).sort((a,b) => b.date-a.date || a.title.localeCompare(b.title,'zh'));

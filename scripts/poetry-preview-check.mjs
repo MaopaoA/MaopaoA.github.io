@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import {poetryPreview} from './poetry-preview.mjs';
+const stanza=(n,label='a')=>Array.from({length:n},(_,i)=>label+(i+1)).join('\n');
+const plain=s=>s.replace(/  /g,'');
+for(const n of [2,3,4,5,6])assert.equal(plain(poetryPreview(stanza(n)+'\n\n'+stanza(4,'b'))),stanza(n)+'\n…');
+assert.equal(plain(poetryPreview(stanza(7))),stanza(3)+'\n…');
+assert.equal(plain(poetryPreview('a1\n\n'+stanza(2,'b')+'\n\n'+stanza(3,'c')+'\n\nd1')),'a1\n\nb1\nb2\n\nc1\nc2\nc3\n…');
+assert.equal(plain(poetryPreview('a1\n\n'+stanza(6,'b'))),'a1\nb1\nb2\n…');
+assert.equal(plain(poetryPreview('a1\n\nb1')),'a1\n\nb1\n…');
+assert.equal(plain(poetryPreview('a1')),'a1\n…');
+assert.equal(poetryPreview(''),'');
+console.log('Poetry previews verified: complete 2–6-line openings, long-stanza fallback, one-line openings, six-line cap and stanza spacing.');

@@ -6,7 +6,7 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "dev": "npm run build && node scripts/serve.mjs",
-    "test": "npm run build && node scripts/check.mjs && node scripts/author-check.mjs",
+    "test": "npm run build && node scripts/check.mjs && node scripts/author-check.mjs && node scripts/poetry-preview-check.mjs",
     "publish": "npm test && node scripts/publish.mjs",
     "new": "node scripts/new-post.mjs"
   },
