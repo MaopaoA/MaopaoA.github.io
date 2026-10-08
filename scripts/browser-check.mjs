@@ -34,6 +34,7 @@ async function verifyEditorialLayout(){
    for(const theme of ['light','dark']){
     await page.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);
     const gradient=await page.locator('.site-footer').evaluate(e=>getComputedStyle(e).backgroundImage);
+    if(width<=768){assert.equal(gradient,'none');continue;}
     assert(gradient.startsWith(`linear-gradient(rgb(${theme==='light'?'255, 255, 255':'34, 34, 34'}) 0%`),gradient);
     assert(gradient.endsWith(', 0) 100%)'),gradient);
    }
@@ -80,7 +81,7 @@ await page.waitForFunction(()=>document.querySelector('.home-profile-avatar img'
 assert((await page.locator('.profile-text').innerText()).trim()===fs.readFileSync('content/profile.md','utf8').trim(),'Original introduction preserved verbatim');
 assert.equal(await page.locator('.home-card').count(),6);
 assert((await page.locator('body').evaluate(e=>getComputedStyle(e).fontFamily)).includes('Times New Roman'));
-assert((await page.locator('body').evaluate(e=>getComputedStyle(e).backgroundImage)).includes('png'));
+assert((await page.locator('body').evaluate(e=>getComputedStyle(document.documentElement).backgroundImage)).includes('png'));
 assert.equal(await page.locator('.home-profile-avatar img').getAttribute('src'),'/image/avatar.png');
 await page.screenshot({path:'/tmp/maopao-desktop.png',fullPage:true});
 for(const width of [320,375,390,768,1440]){

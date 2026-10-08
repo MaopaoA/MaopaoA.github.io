@@ -81,3 +81,5 @@ On narrow screens, Literary Creation switches between novels/essays and poetry a
 Sharing uses the article title, canonical URL, the author-provided `description` (or the original opening line), and `/image/share.png`. Set `share_image: /image/your-cover.png` in an article’s front matter to use a custom raster cover. No generated summaries are added. Native sharing is used when available; otherwise the share button copies the link.
 
 `node scripts/reading-check.mjs` checks mobile reading and navigation using the local preview (port 4179 by default; override with `SITE_URL`). Start it with `PORT=4179 node scripts/serve.mjs`.
+
+The desktop snow background covers the viewport and is painted on the root canvas. Compact screens use an edge-to-edge reading layout with snow only in the masthead; touch landscape screens keep this layout. Vertical overscroll is disabled on the root, while wide tables, code and equations scroll within the article.

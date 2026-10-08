@@ -40,4 +40,31 @@ await page.getByRole('button',{name:'放大阅读字号'}).click();
 await page.goto(base+'/posts/literature/失忆',{waitUntil:'domcontentloaded'});
 assert.equal(await page.locator('.prose').evaluate(e=>getComputedStyle(e).fontSize),'16.5px','Poetry preference does not change fiction');
 await page.evaluate(()=>{navigator.share=async data=>{window.sharedArticle=data;};});await page.getByRole('button',{name:'分享',exact:true}).click();assert.equal(await page.evaluate(()=>window.sharedArticle.title),'失忆');
+// Tall desktops, breakpoints, short landscape windows and long article bottoms.
+for(const [width,height] of [[320,568],[390,844],[767,1024],[768,1024],[769,1024],[1024,768],[1119,800],[1120,800],[1440,2200],[1920,1080]]){
+ await page.setViewportSize({width,height});
+ for(const route of ['/','/research','/posts/literature/失忆']){
+  await page.goto(base+route,{waitUntil:'domcontentloaded'});
+  const canvas=await page.evaluate(()=>({overflow:document.documentElement.scrollWidth>innerWidth,background:getComputedStyle(document.documentElement).backgroundSize,image:getComputedStyle(document.documentElement).backgroundImage,bounce:getComputedStyle(document.documentElement).overscrollBehaviorY}));
+  assert(!canvas.overflow,`${width}x${height} ${route}`);assert.equal(canvas.bounce,'none');
+  const main=await page.locator('.content').boundingBox();
+  if(width<=768){assert.equal(main.x,0);assert.equal(main.width,width);assert.equal(canvas.image,'none');}
+  else{assert.equal(canvas.background,'cover');assert(canvas.image.includes('星合')||canvas.image.includes('.png'));}
+  await page.evaluate(()=>scrollTo(0,document.documentElement.scrollHeight));
+  assert(await page.locator('.site-footer').isVisible());
+ }
+}
+await page.setViewportSize({width:390,height:844});await page.goto(base+'/posts/literature/失恋',{waitUntil:'domcontentloaded'});
+await page.getByRole('button',{name:'切换夜间阅读'}).click();
+const darkColors=await page.evaluate(()=>[document.documentElement,document.querySelector('.content'),document.querySelector('.site-footer')].map(e=>getComputedStyle(e).backgroundColor));
+assert(darkColors.every(color=>color==='rgb(34, 34, 34)'),'Night canvas, content and footer match');
+await page.getByRole('button',{name:'切换日间阅读'}).click();
+const touch=await browser.newContext({viewport:{width:844,height:390},isMobile:true,hasTouch:true});
+const landscape=await touch.newPage();await landscape.goto(base+'/posts/literature/失忆',{waitUntil:'domcontentloaded'});
+assert.equal((await landscape.locator('.content').boundingBox()).x,0,'Touch phone landscape remains edge to edge');
+assert(await landscape.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+await landscape.getByRole('button',{name:'打开菜单'}).click();
+assert(await landscape.locator('.site-menu').evaluate(e=>e.scrollHeight>e.clientHeight),'Short-screen menu has its own scroll');
+await landscape.locator('.menu-close').click();await touch.close();
+await page.setViewportSize({width:1440,height:1050});await page.goto(base+'/',{waitUntil:'domcontentloaded'});await page.screenshot({path:'/tmp/maopao-desktop-canvas.png',fullPage:true});
 assert.deepEqual(errors,[]);await browser.close();console.log('Reading verified at five widths: nine pages, subject switching, direct poetry links, stanza preservation, independent fonts, two-character indents, share metadata and share action.');
