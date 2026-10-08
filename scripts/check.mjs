@@ -16,8 +16,8 @@ const profile=fs.readFileSync('content/profile.md','utf8').trim();
 for(const url of ['index.html','about/index.html']) assert(fs.readFileSync(path.join(root,url),'utf8').includes(profile),'Original introduction preserved verbatim');
 const home=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const categories=home.match(/<nav class="home-sections-nav"[^>]*>(.*?)<\/nav>/)[1];
-assert.equal((categories.match(/<a /g)||[]).length,2,'Homepage has one literary and one science section');
-assert(categories.includes('/literature')&&categories.includes('/research'));
+assert.equal((categories.match(/<a /g)||[]).length,3,'Homepage has literature, science and history sections');
+assert(categories.includes('/literature')&&categories.includes('/research')&&categories.includes('/history'));
 assert(!home.includes('Career Progression')&&!home.includes('href="/math"'));
 assert(fs.readFileSync(path.join(root,'math/index.html'),'utf8').includes('location.replace("/research")'));
 assert(home.includes('home-three-col'),'Original three-column layout restored');
@@ -28,5 +28,5 @@ assert(!home.includes('poole.min.css')&&!home.includes('lanyon.min.css'),'No leg
 for(const banned of ['世界的另一种','在故事里寻找真实','重新理解我们自己','当机器开始思考','我们如何理解','另一条探索','一些微小而遥远','THE QUIET OF LOOKING'])assert(!home.includes(banned),`Removed invented homepage copy: ${banned}`);
 const search=JSON.parse(fs.readFileSync(path.join(root,'search-index.json')));assert.equal(search.length,manifest.length);assert(search.find(p=>p.title==='失忆').text.includes('索尼'),'Search includes the complete article, not just an excerpt');
 assert(fs.readFileSync(path.join(root,'research/index.html'),'utf8').includes('暂无文章。'));
-for(const kind of ['fiction','poetry','research']){const xml=fs.readFileSync(path.join(root,`feeds/${kind}.xml`),'utf8');assert.equal((xml.match(/<entry>/g)||[]).length,manifest.filter(p=>p.kind===kind).length);}
+for(const kind of ['fiction','poetry','research','history']){const xml=fs.readFileSync(path.join(root,`feeds/${kind}.xml`),'utf8');assert.equal((xml.match(/<entry>/g)||[]).length,manifest.filter(p=>p.kind===kind).length);}
 console.log(`Verified ${files.length} pages: original intro and works, internal links, comment paths, full-text index, category feeds, removed homepage copy.`);

@@ -18,7 +18,7 @@ for(const width of [320,390,768,1024,1440]){
   await page.reload({waitUntil:'domcontentloaded'});assert(await page.locator('#poems').isVisible());
   await page.locator('[data-literature-view=novels]').click();assert(await page.locator('#novels').isVisible());
  }else{assert(await page.locator('#novels').isVisible());assert(await page.locator('#poems').isVisible());}
- for(const route of ['/','/literature','/poetry','/archive','/subscribe','/about','/research','/posts/literature/失忆','/posts/literature/失恋']){
+ for(const route of ['/','/literature','/poetry','/archive','/subscribe','/about','/research','/history','/posts/literature/失忆','/posts/literature/失恋']){
   await page.goto(base+route,{waitUntil:'domcontentloaded'});
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${width} ${route}`);
  }

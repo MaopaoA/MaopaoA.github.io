@@ -26,5 +26,14 @@ try{
  assert(read('posts/research/测试研究/index.html').includes('katex-display'),'Research math rendered');
  assert(!read('atom.xml').includes('未发表'),'Draft excluded from subscription');
  assert(!fs.existsSync(path.join(fixture,'_site/posts/literature/未发表')),'Draft not rendered');
+ assert.equal(run('new-post.mjs',['--kind','history','--title','历史测试','--date','2026-10-08']).status,0);
+ const historyFile=path.join(fixture,'_posts/history/2026-10-08-历史测试.md');
+ fs.appendFileSync(historyFile,'\n史料正文。\n\n<figure><svg viewBox="0 0 100 50" role="img" aria-label="时间轴"><path d="M0 25H100" /></svg><figcaption>史料图注</figcaption></figure>\n');
+ assert.equal(run('build.mjs').status,0);
+ assert(read('history/index.html').includes('历史测试'));
+ assert(read('feeds/history.xml').includes('历史测试'));
+ assert(read('posts/history/历史测试/index.html').includes('<svg viewBox="0 0 100 50"'));
+ assert(read('posts/history/历史测试/index.html').includes('史料图注'));
+ assert(JSON.parse(read('search-index.json')).some(p=>p.kind==='history'&&p.text.includes('史料正文')));
  console.log('Author workflow verified: creation, categories, tags, featuring, drafts, math, valid dates, overwrite protection.');
 }finally{fs.rmSync(fixture,{recursive:true,force:true});}

@@ -18,13 +18,13 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>'
 const safeJSON = value => JSON.stringify(value).replace(/</g, '\\u003c');
 const walk = dir => fs.existsSync(dir) ? fs.readdirSync(dir, {withFileTypes:true}).flatMap(e => e.isDirectory() ? walk(path.join(dir,e.name)) : [path.join(dir,e.name)]) : [];
 const text = html => html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-const labels = {fiction: '小说', poetry: '诗歌', research: '数学与 AI'};
-const english = {fiction: 'FICTION', poetry: 'POETRY', research: 'MATH &amp; AI'};
-const collectionURL = {fiction: '/literature', poetry: '/poetry', research: '/research'};
+const labels = {fiction: '小说', poetry: '诗歌', research: '数学与 AI', history: '历史与传记'};
+const english = {fiction: 'FICTION', poetry: 'POETRY', research: 'MATH &amp; AI', history: 'HISTORY &amp; BIOGRAPHY'};
+const collectionURL = {fiction: '/literature', poetry: '/poetry', research: '/research', history: '/history'};
 const posts = walk('_posts').filter(p => p.endsWith('.md')).filter(file => matter(fs.readFileSync(file,'utf8')).data.published !== false).map(file => {
   const {data,content} = matter(fs.readFileSync(file,'utf8'));
-  const kind = data.kind || (file.includes('/poem/') ? 'poetry' : file.includes('/novel/') ? 'fiction' : 'research');
-  if (!labels[kind]) throw new Error(`Invalid kind in ${file}: use fiction, poetry, or research`);
+  const kind = data.kind || (file.includes('/poem/') ? 'poetry' : file.includes('/novel/') ? 'fiction' : file.includes('/history/') ? 'history' : 'research');
+  if (!labels[kind]) throw new Error(`Invalid kind in ${file}: use fiction, poetry, research, or history`);
   const body = content.replace(/^\s*#\s+[^\n]+\n/, '');
   const date = data.date instanceof Date ? data.date : new Date(String(data.date).replace(/^(\d{4})-(\d{1,2})-(\d{1,2}).*$/, (_,y,m,d) => `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}T00:00:00Z`));
   if (!data.title || Number.isNaN(date.getTime())) throw new Error(`Missing title or invalid date: ${file}`);
@@ -46,7 +46,7 @@ const profileHTML = md.render(fs.readFileSync(config.profile,'utf8'));
 const featured = [...new Set([...posts.filter(p=>p.featured===true), ...config.featured.map(url=>posts.find(p=>p.url===url)).filter(Boolean)])];
 const presentation = createPresentation({config, legacy, posts, featured, profileHTML, md, esc, labels, date, row});
 const {nav, footer} = presentation;
-function shell(title,content,{active='',url='/',description='小说、诗歌、数学与 AI。',article=false,shareImage='/image/share.png'}={}) {
+function shell(title,content,{active='',url='/',description='小说、诗歌、数学与 AI、历史与传记。',article=false,shareImage='/image/share.png'}={}) {
   return `<!doctype html><html lang="zh-CN" style="--site-background:url('${esc(config.background||'/image/星合之空.png')}')"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>${esc(title)} · Maopao</title><meta name="description" content="${esc(description)}"><meta name="theme-color" content="#ffffff"><link rel="canonical" href="${origin}${esc(url)}"><meta property="og:title" content="${esc(title)} · Maopao"><meta property="og:description" content="${esc(description)}"><meta property="og:type" content="${article?'article':'website'}"><meta property="og:url" content="${origin}${esc(url)}"><meta property="og:site_name" content="Maopao"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="${esc(new URL(shareImage,origin).href)}"><meta property="og:image:alt" content="Maopao’s Blog"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${esc(title)} · Maopao"><meta name="twitter:description" content="${esc(description)}"><meta name="twitter:image" content="${esc(new URL(shareImage,origin).href)}"><link rel="icon" href="/image/icon.png" type="image/png"><link rel="alternate" type="application/atom+xml" title="Maopao" href="/atom.xml"><script src="/assets/theme.js?v=${revision}"></script><link rel="stylesheet" href="/assets/site.css?v=${revision}">${article?'<link rel="stylesheet" href="/assets/katex/katex.min.css">':''}<script src="/assets/site.js?v=${revision}" defer></script></head><body><a class="skip-link" href="#main">跳至正文</a>${article?'<div class="reading-progress" aria-hidden="true"></div>':''}<div class="site-wrap">${nav(active)}<main id="main" class="content">${content}</main>${footer}</div></body></html>`;
 }
 function write(url,html) {const target = url.endsWith('.html') ? path.join(out,url) : path.join(out,url,'index.html');fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,html);}
@@ -67,7 +67,7 @@ write('/',shell('首页',presentation.home));
 for (const kind of Object.keys(labels)) {
  const list=posts.filter(p=>p.kind===kind);const url=collectionURL[kind];
  if(kind==='fiction'){write(url,shell('Literary Creation',presentation.literature,{active:kind,url}));continue;}
- write(url,shell(labels[kind],`<section class="collection-head"><p class="eyebrow">${english[kind]} / ${list.length}</p><h1>${kind==='poetry'?'Poetry':'Math &amp; AI'}</h1><a class="collection-feed" href="/feeds/${kind}.xml">订阅此分类 ${arrow}</a></section>${list.length?`<div class="collection-list">${list.map(row).join('')}</div>`:'<p class="empty-state">暂无文章。</p>'}`,{active:kind,url}));
+ write(url,shell(labels[kind],`<section class="collection-head"><p class="eyebrow">${english[kind]} / ${list.length}</p><h1>${kind==='poetry'?'Poetry':kind==='history'?'History &amp; Biography':'Math &amp; AI'}</h1><a class="collection-feed" href="/feeds/${kind}.xml">订阅此分类 ${arrow}</a></section>${list.length?`<div class="collection-list">${list.map(row).join('')}</div>`:'<p class="empty-state">暂无文章。</p>'}`,{active:kind,url}));
 }
 const tags=[...new Set(posts.flatMap(p=>p.tags))].sort((a,b)=>a.localeCompare(b,'zh'));
 write('/archive',shell('全部文章',`<section class="collection-head"><p class="eyebrow">ARCHIVE / ${posts.length}</p><h1>全部文章</h1></section><div class="archive-tools"><div class="filters" role="group" aria-label="按类型筛选"><button class="active" aria-pressed="true" data-filter="all">全部 <span>${posts.length}</span></button>${Object.keys(labels).map(k=>`<button aria-pressed="false" data-filter="${k}">${labels[k]} <span>${posts.filter(p=>p.kind===k).length}</span></button>`).join('')}</div><label class="search-label" id="search"><span class="sr-only">搜索标题、正文或标签</span><input type="search" placeholder="搜索标题、正文或标签" aria-label="搜索标题、正文或标签"><span aria-hidden="true">⌕</span></label></div>${tags.length?`<div class="tag-filter"><label for="tag-select">标签</label><select id="tag-select"><option value="">全部标签</option>${tags.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('')}</select></div>`:''}<p class="sr-only" id="result-count" aria-live="polite">${posts.length} 篇文章</p><div class="collection-list">${posts.map(row).join('')}</div><p class="search-empty" hidden>没有找到文章。</p><p class="search-error" hidden role="status">搜索暂时无法加载。请刷新重试。</p>`,{active:'archive',url:'/archive'}));
@@ -92,7 +92,7 @@ function feed(list,title,url) {
 fs.writeFileSync(path.join(out,'atom.xml'),feed(posts,'Maopao','/atom.xml'));
 fs.mkdirSync(path.join(out,'feeds'),{recursive:true});
 for(const kind of Object.keys(labels)) fs.writeFileSync(path.join(out,`feeds/${kind}.xml`),feed(posts.filter(p=>p.kind===kind),`Maopao · ${labels[kind]}`,`/feeds/${kind}.xml`));
-const urls=['/','/literature','/poetry','/research','/about','/archive','/subscribe',...posts.map(p=>p.url)];
+const urls=['/','/literature','/poetry','/research','/history','/about','/archive','/subscribe',...posts.map(p=>p.url)];
 fs.writeFileSync(path.join(out,'sitemap.xml'),`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.map(u=>`<url><loc>${origin}${esc(encodeURI(u))}</loc></url>`).join('')}</urlset>`);
 fs.writeFileSync(path.join(out,'robots.txt'),`User-agent: *\nAllow: /\nSitemap: ${origin}/sitemap.xml\n`);
 fs.writeFileSync(path.join(out,'manifest.json'),JSON.stringify(posts.map(({title,url,kind,tags})=>({title,url,kind,tags})),null,2));

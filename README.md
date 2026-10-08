@@ -13,7 +13,7 @@ npm ci
 npm run new -- --kind fiction --title "文章标题" --tags "标签1,标签2"
 ```
 
-Use `fiction`, `poetry`, or `research` for `--kind`. The command creates a dated Markdown file in the appropriate `_posts` folder and refuses to overwrite an existing file. Optional flags:
+Use `fiction`, `poetry`, `research`, or `history` for `--kind`. The command creates a dated Markdown file in the appropriate `_posts` folder and refuses to overwrite an existing file. Optional flags:
 
 - `--featured`: show the article in the homepage's Archive column
 - `--draft`: create it with `published: false`, so it stays out of the website, search, and feeds
@@ -33,7 +33,7 @@ published: true
 ---
 ```
 
-Folders: `_posts/literature/novel/` for fiction, `_posts/literature/poem/` for poetry, `_posts/research/` for research. Without `kind`, the folder sets the category. Remove `featured: true` to unfeature an article. Set `published: false` to hide a draft. Draft files committed to this public repository are still publicly accessible on GitHub; this flag only excludes them from the rendered blog.
+Folders: `_posts/literature/novel/` for fiction, `_posts/literature/poem/` for poetry, `_posts/research/` for research, `_posts/history/` for history and biography. Without `kind`, the folder sets the category. Remove `featured: true` to unfeature an article. Set `published: false` to hide a draft. Draft files committed to this public repository are still publicly accessible on GitHub; this flag only excludes them from the rendered blog.
 
 Existing articles and their addresses remain unchanged. A leading Markdown `#` title is optional and is omitted from the reader to prevent a duplicate heading. Poetry supports hard line breaks (two trailing spaces). Articles support code blocks, tables, links, and `$...$` / `$$...$$` math.
 
@@ -59,7 +59,7 @@ GitHub Pages publishes from `master` / root. `.nojekyll` serves compiled HTML di
 
 Comments reuse the existing Valine / LeanCloud configuration from `_config.yml`, including app settings and the original URL-based thread identifiers. Valine and its LeanCloud SDK are bundled locally and load when a reader chooses to view or write comments. The configuration uses the verified current API endpoint for the existing account. Existing comments remain stored in your existing service. Manage them through the same LeanCloud account. `valine.serverURLs` can be set in `_config.yml` if the service uses a custom API domain.
 
-`/subscribe` provides a copyable RSS address and links to category feeds. The all-posts feed remains at `/atom.xml`; category feeds are `/feeds/fiction.xml`, `/feeds/poetry.xml`, and `/feeds/research.xml`. All feeds contain the article's full text.
+`/subscribe` provides a copyable RSS address and links to category feeds. The all-posts feed remains at `/atom.xml`; category feeds are `/feeds/fiction.xml`, `/feeds/poetry.xml`, `/feeds/research.xml`, and `/feeds/history.xml`. All feeds contain the article's full text.
 
 ## Development
 
@@ -72,7 +72,7 @@ Comments reuse the existing Valine / LeanCloud configuration from `_config.yml`,
 
 Historical theme files and the original LICENSE remain. The previous site was based on [wu-kan/wu-kan.github.io](https://github.com/wu-kan/wu-kan.github.io). Unless otherwise stated, writing is licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.zh). Noto Serif SC has native Songti fallbacks. KaTeX and Valine assets retain their bundled licenses.
 
-The main navigation has two subject sections: Literary Creation (fiction and poetry) and Math & AI (the `research` category, including mathematics). Existing `/math` links redirect to `/research`; the retired `/career` page redirects to the archive.
+The main navigation has three subject sections: Literary Creation (fiction and poetry), Math & AI (the `research` category, including mathematics), and History & Biography (`history`). Existing `/math` links redirect to `/research`; the retired `/career` page redirects to the archive.
 
 ## Reading and sharing
 
@@ -83,3 +83,9 @@ Sharing uses the article title, canonical URL, the author-provided `description`
 `node scripts/reading-check.mjs` checks mobile reading and navigation using the local preview (port 4179 by default; override with `SITE_URL`). Start it with `PORT=4179 node scripts/serve.mjs`.
 
 The desktop snow background covers the viewport and is painted on the root canvas. Compact screens use an edge-to-edge reading layout with snow only in the masthead; touch landscape screens keep this layout. Vertical overscroll is disabled on the root, while wide tables, code and equations scroll within the article.
+
+## History and biography
+
+Create an article with `npm run new -- --kind history --title "文章标题"`. Markdown remains the writing format. The current renderer supports HTML in Markdown, so articles can already embed static SVG, `<figure>` with captions, tables, and self-contained HTML visualizations through `<iframe>`. Put local visualization files under `assets/` and reference them with root-relative URLs. Give embedded frames a title and explicit responsive dimensions. Keep references and explanatory text in the article itself, with a static fallback for interactive figures.
+
+For future timelines, maps and relationship graphs, keep structured source data (JSON/CSV) and visualization code separate from the prose. Add interactive components when an actual article needs them; load those assets only for that article. Complex visuals do not require converting all articles to HTML or changing the literature publishing format. No visualization library is loaded by the new category itself.
